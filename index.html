@@ -3,319 +3,547 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qi Wang | Simulation Engineer & Visual Artist</title>
+    <title>Qi Wang | Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Noto Sans SC', 'system-ui', 'sans-serif'],
-                        mono: ['SFMono-Regular', 'JetBrains Mono', 'monospace'],
+                        sans: ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Helvetica Neue', 'Noto Sans SC', 'sans-serif'],
+                        mono: ['SF Mono', 'JetBrains Mono', 'monospace'],
                     }
                 }
             }
         }
     </script>
     <style>
-        /* --- 核心变量控制 --- */
         :root {
-            --bg: #ffffff;
-            --text-main: #000000;
-            --text-sub: #666666;
-            --card-bg: #f9f9fb;
-            --border: #e5e5e5;
-            --btn-bg: #000000;
-            --btn-text: #ffffff;
-            --grid: rgba(0, 0, 0, 0.03);
+            --bg: #f5f5f7;
+            --text-main: #1d1d1f;
+            --text-sub: #424245;
+            --label: #86868b;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --border: rgba(0, 0, 0, 0.1);
+            --accent: #0071e3;
         }
 
         [data-theme="dark"] {
-            --bg: #050505;
-            --text-main: #ffffff;
-            --text-sub: #a1a1a6;
-            --card-bg: #111111;
-            --border: #222222;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-            --grid: rgba(255, 255, 255, 0.03);
+            --bg: #000000;
+            --text-main: #f5f5f7;
+            --text-sub: #d2d2d7;
+            --label: #86868b;
+            --card-bg: rgba(28, 28, 30, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #00d4ff;
         }
 
         html { scroll-behavior: smooth; transition: background-color 0.5s ease; }
         body { 
             background-color: var(--bg); 
             color: var(--text-main); 
+            -webkit-font-smoothing: antialiased; 
             transition: all 0.5s ease;
             overflow-x: hidden;
         }
 
-        /* 核心语言切换逻辑：隐藏非当前语言的标签 */
         body[data-lang="en"] .lang-zh { display: none; }
         body[data-lang="zh"] .lang-en { display: none; }
 
-        .bg-grid {
-            background-image: linear-gradient(var(--grid) 1px, transparent 1px),
-                              linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-            background-size: 50px 50px;
-            mask-image: radial-gradient(circle at center, black, transparent 85%);
-        }
-
         .reveal {
             opacity: 0;
-            transform: translateY(30px) scale(0.98);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: transform, opacity;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.15, 0, 0.15, 1);
         }
-        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-        .premium-card {
+        .apple-glass {
             background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border);
-            transition: all 0.4s ease;
-        }
-        .premium-card:hover {
-            border-color: var(--text-main);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.15, 0, 0.15, 1);
         }
 
         .text-hero {
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            line-height: 0.85;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
         }
-
-        .ai-tag {
-            background: var(--text-main);
-            color: var(--bg);
-            font-weight: 800;
-            font-size: 10px;
-            padding: 4px 12px;
-            border-radius: 99px;
+        
+        /* 分点小字强化：确保能看清 */
+        .section-label {
+            color: var(--label);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
         }
     </style>
 </head>
 <body class="antialiased" data-lang="en" data-theme="dark">
 
-    <div class="fixed inset-0 bg-grid pointer-events-none"></div>
+    <div class="fixed inset-0 pointer-events-none opacity-20" style="background-image: radial-gradient(var(--accent) 0.5px, transparent 0.5px); background-size: 30px 30px;"></div>
 
     <header class="fixed top-0 w-full z-50 bg-opacity-70 backdrop-blur-xl border-b border-white/5 transition-all">
-        <nav class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <span class="text-2xl font-black uppercase tracking-tighter">Qi Wang</span>
-                <span class="hidden md:inline font-mono text-[10px] opacity-40 tracking-widest">SYDNEY // v.5.1</span>
+        <nav class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-xl font-bold tracking-tight">Qi Wang</span>
+                <span class="hidden md:inline font-mono text-[10px] opacity-40 uppercase tracking-widest">USYD // v.5.6</span>
             </div>
             
             <div class="flex items-center gap-6 text-[12px] font-bold uppercase tracking-widest">
                 <button onclick="toggleTheme()" class="text-lg hover:scale-110 transition-transform">🌓</button>
-                
-                <button onclick="toggleLang()" class="border-b-2 border-current hover:opacity-50 transition-all">
-                    <span class="lang-en">ZH / EN</span>
-                    <span class="lang-zh">EN / 中</span>
+                <button onclick="toggleLang()" class="border-b border-current hover:opacity-50 transition-all px-1">
+                    <span class="lang-en">ZH / 中</span><span class="lang-zh">EN / 英</span>
                 </button>
-
-                <a id="resume-btn" href="Resume_EN.pdf" download class="px-6 py-2 rounded-full transition-all hover:shadow-lg active:scale-95 font-black" style="background: var(--btn-bg); color: var(--btn-text)">
-                    <span class="lang-en">RESUME</span>
-                    <span class="lang-zh">下载简历</span>
+                <a id="resume-btn" href="Resume_EN.pdf" download class="px-6 py-2 bg-[#1d1d1f] dark:bg-[#f5f5f7] text-white dark:text-black rounded-full font-bold transition-all hover:opacity-80 active:scale-95 shadow-sm">
+                    RESUME
                 </a>
             </div>
         </nav>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 pt-32">
+    <main class="max-w-6xl mx-auto px-6 pt-32">
         
-        <section id="hero" class="py-24 md:py-40 reveal">
-            <p class="font-mono text-xs opacity-50 mb-8 tracking-[0.5em] uppercase">Simulation Engineer & Visual Artist</p>
-            <h1 class="text-hero text-6xl md:text-8xl lg:text-[10rem] mb-12">
-                <span class="lang-en">Engineering<br>Precision<br>& Visual Art.</span>
-                <span class="lang-zh">连接<br>工程精度<br>与视觉艺术。</span>
+        <section class="py-32 md:py-48 reveal">
+            <div class="mb-10 font-mono text-[11px] tracking-[0.6em] opacity-40 uppercase flex items-center gap-4">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#00d4ff] shadow-[0_0_8px_#00d4ff] animate-pulse"></span>
+                <span>System Status: Nominal</span>
+                <span class="hidden md:inline opacity-30">//</span>
+                <span class="hidden md:inline">Loc: 33.8688° S, 151.2093° E</span>
+                <span class="hidden lg:inline opacity-30">//</span>
+                <span class="hidden lg:inline">Core_Temp: Stable</span>
+            </div>
+
+            <h1 class="text-hero text-5xl md:text-7xl mb-12">
+                <span class="lang-en">Engineering Precision.<br><span style="color: var(--label)">Visual Mastery.</span></span>
+                <span class="lang-zh">工程的精度。<br><span style="color: var(--label)">视觉的造诣。</span></span>
             </h1>
-            <p class="text-xl md:text-2xl opacity-60 font-light max-w-4xl leading-relaxed">
-                <span class="lang-en">USYD Mechanical Engineering Master Candidate. Specialist in 7-DOF Dynamics, GA-PID Control, and 500px Contracted Photography.</span>
-                <span class="lang-zh">悉尼大学机械工程硕士在读。专注于七自由度动力学仿真、遗传算法控制优化及 500px 签约商业摄影。</span>
+            <p class="text-xl md:text-2xl max-w-2xl leading-relaxed font-medium" style="color: var(--text-sub)">
+                <span class="lang-en">USYD Mechanical Engineering. Specialist in 7-DOF Vehicle Dynamics & GA-PID Control.</span>
+                <span class="lang-zh">悉尼大学机械工程。专注于七自由度动力学仿真、遗传算法控制优化及 500px 签约商业摄影。</span>
             </p>
         </section>
 
-        <section id="about" class="py-24 border-t border-white/10 grid md:grid-cols-3 gap-16 reveal">
-            <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em]">
-                <span class="lang-en">/ 01. Profile Summary</span>
-                <span class="lang-zh">/ 01. 个人概述</span>
-            </div>
-            <div class="md:col-span-2 space-y-8 text-xl md:text-2xl font-light leading-snug">
-                <p>
-                    <span class="lang-en">Incoming Master’s student at <strong class="font-bold">The University of Sydney</strong>. Proficient in MATLAB/Simulink and ADAMS for complex system modeling.</span>
-                    <span class="lang-zh">即将进入<strong class="font-bold">悉尼大学</strong>。精通利用 <strong class="font-bold">MATLAB/Simulink</strong> 和 <strong class="font-bold">ADAMS</strong> 进行复杂系统建模。</span>
+        <section id="about" class="py-24 border-t border-current border-opacity-10 grid md:grid-cols-3 gap-12 reveal">
+            <div class="section-label">/ 01. Profile Summary</div>
+            <div class="md:col-span-2 space-y-10">
+                <p class="text-2xl md:text-3xl font-semibold leading-snug">
+                    <span class="lang-en">Expert in translating complex physics into robust engineering solutions via <span class="text-blue-500">MATLAB/Simulink</span> and <span class="text-blue-500">ADAMS</span>.</span>
+                    <span class="lang-zh">精通利用 <span class="text-blue-500">MATLAB/Simulink</span> 和 <span class="text-blue-500">ADAMS</span> 将复杂的物理系统转化为稳健的工程算法。</span>
                 </p>
-                <div class="py-4 font-mono text-sm opacity-30">
+                <div class="py-6 font-mono text-xl text-blue-500 opacity-80">
                     $$\min J = \int_{0}^{\infty} [q z_c^2(t) + r u^2(t)] dt$$
                 </div>
-                <p>
-                    <span class="lang-en">As a <strong class="font-bold">500px contracted photographer</strong>, I bridge technical precision with visual aesthetics.</span>
-                    <span class="lang-zh">作为 <strong class="font-bold">500px 签约摄影师</strong>，我致力于在工程严谨性与美学感召力之间建立联系。</span>
+                <p class="text-lg leading-relaxed font-medium" style="color: var(--text-sub)">
+                    <span class="lang-en">As a <strong style="color: var(--text-main)">500px contracted photographer</strong>, I bridge technical rigor with visual aesthetics through high-end technical visualizations.</span>
+                    <span class="lang-zh">作为 <strong style="color: var(--text-main)">500px 签约摄影师</strong>，我致力于在工程严谨性与美学感召力之间建立直观的视觉联系。</span>
                 </p>
             </div>
         </section>
 
-        <section id="engineering" class="py-24 border-t border-white/10">
-            <div class="mb-20 flex justify-between items-end reveal">
-                <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em]">
-                    <span class="lang-en">/ 02. Engineering Portfolio</span>
-                    <span class="lang-zh">/ 02. 工程项目作品集</span>
-                </div>
-                <div class="font-mono text-[10px] opacity-40 tracking-widest uppercase">Executing_Terminal_Mode</div>
+        <section id="engineering" class="py-24 border-t border-current border-opacity-10">
+            <div class="mb-20 reveal">
+                <div class="section-label mb-4">/ 02. Engineering Works</div>
             </div>
 
             <div class="grid md:grid-cols-2 gap-12">
-                <div class="premium-card rounded-3xl p-10 group reveal js-tilt" data-tilt>
-                    <span class="font-mono text-[10px] opacity-40">CONTROL_SYSTEMS</span>
-                    <h3 class="text-2xl font-bold mt-4 mb-8">
-                        <span class="lang-en">7-DOF Semi-Active Suspension</span>
-                        <span class="lang-zh">七自由度半主动悬架控制</span>
-                    </h3>
-                    <div class="grid grid-cols-2 gap-3 mb-8">
-                        <img src="images/c35139d040d8c48c577d37ccaff4fabe.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
-                        <img src="images/08458e2f4ddfef8fe46de75e12093f77.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
+                <div class="apple-glass rounded-[2.5rem] p-10 group reveal js-tilt" data-tilt>
+                    <h3 class="text-2xl font-bold mb-8 tracking-tight">7-DOF Suspension</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <img src="images/c35139d040d8c48c577d37ccaff4fabe.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="images/08458e2f4ddfef8fe46de75e12093f77.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
                     </div>
-                    <p class="text-sm opacity-60 leading-relaxed font-light">
-                        <span class="lang-en">Achieved <strong class="text-current font-bold">58.7% reduction</strong> in vertical acceleration RMS using GA-PID.</span>
-                        <span class="lang-zh">利用遗传算法优化的 PID 策略，实现加速度均方根值 <strong class="font-bold text-current">58.7% 的降幅</strong>。</span>
+                    <p class="text-xl font-bold mb-2">58.7% RMS Reduction</p>
+                    <p class="text-base leading-relaxed font-medium" style="color: var(--text-sub)">
+                        <span class="lang-en">Optimization of semi-active suspension via GA-PID control.</span>
+                        <span class="lang-zh">通过遗传算法优化的 PID 策略，大幅提升车辆行驶平顺性。</span>
                     </p>
                 </div>
 
-                <div class="premium-card rounded-3xl p-10 group reveal js-tilt" data-tilt style="transition-delay: 100ms;">
-                    <span class="font-mono text-[10px] opacity-40">MECHANICAL_DESIGN</span>
-                    <h3 class="text-2xl font-bold mt-4 mb-8">
-                        <span class="lang-en">Steel Plate Turning System</span>
-                        <span class="lang-zh">钢板翻转机构综合设计</span>
-                    </h3>
-                    <div class="grid grid-cols-2 gap-3 mb-8">
-                        <img src="images/cb7791086333d4d69f2aff3d8a59ee66.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
-                        <img src="images/73e17f49ad824ee0d5a4c1752d363e1b.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
+                <div class="apple-glass rounded-[2.5rem] p-10 group reveal js-tilt" data-tilt>
+                    <h3 class="text-2xl font-bold mb-8 tracking-tight">Mechanism Design</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <img src="images/cb7791086333d4d69f2aff3d8a59ee66.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="images/73e17f49ad824ee0d5a4c1752d363e1b.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
                     </div>
-                    <p class="text-sm opacity-60 leading-relaxed font-light">
-                        <span class="lang-en">Modeled <strong class="text-current font-bold">774 individual components</strong> in SolidWorks with FEA analysis.</span>
-                        <span class="lang-zh">在 SolidWorks 中完成了 <strong class="font-bold text-current">774 个零件</strong> 的精密建模，并通过有限元应力分析验证。</span>
+                    <p class="text-xl font-bold mb-2">774 Component Assembly</p>
+                    <p class="text-base leading-relaxed font-medium" style="color: var(--text-sub)">
+                        <span class="lang-en">Full SolidWorks assembly and FEA stress analysis verification.</span>
+                        <span class="lang-zh">基于 SolidWorks 的全比例装配及有限元应力动态验证。</span>
                     </p>
                 </div>
             </div>
         </section>
 
-        <section id="visual" class="py-24 border-t border-white/10">
-            <div class="mb-16 reveal">
-                <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em] mb-4">
-                    <span class="lang-en">/ 03. Visual Portfolio</span>
-                    <span class="lang-zh">/ 03. 视觉艺术作品集</span>
-                </div>
-                <h2 class="text-4xl font-black italic uppercase">Nature & Urban // <span class="lang-zh">实拍摄影</span><span class="lang-en">Photography</span></h2>
+        <section id="visual" class="py-24 border-t border-current border-opacity-10">
+            <div class="mb-20 reveal">
+                <div class="section-label mb-6">/ 03. Visual Arts</div>
+                <h2 class="text-4xl font-bold tracking-tight">Nature & Urban</h2>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-24 reveal">
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
-                    <img src="images/mountain.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-32 reveal">
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/mountain.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s]">
                 </div>
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
                     <img src="images/moon.png" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
                 </div>
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
                     <img src="images/night.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
                 </div>
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
                     <img src="images/c73c93200937771ab11bd38626287762.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
                 </div>
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt border border-white/5" data-tilt>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
                     <img src="images/city-night-2.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
                 </div>
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
                     <img src="images/0778d39c7f0697d71ed01503a4294365.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
                 </div>
             </div>
 
             <div class="mb-12 reveal">
-                <h2 class="text-4xl font-black italic uppercase">Neural Synthesis // <span class="lang-zh">AI 艺术</span><span class="lang-en">AI Art</span></h2>
-                <p class="font-mono text-[10px] opacity-40 mt-2 uppercase tracking-widest">AI Assisted Visionary Assets</p>
+                <h2 class="text-4xl font-bold tracking-tight mb-4">Neural Synthesis</h2>
+                <p class="text-lg opacity-50 font-light">AI-assisted visual experimentation.</p>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-6 reveal">
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
-                    <img src="images/Gemini_Generated_Image_j28htxj28htxj28h.png" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
-                    <span class="absolute top-6 left-6 ai-tag">AI_Synth</span>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 reveal">
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/Gemini_Generated_Image_j28htxj28htxj28h.png" class="absolute inset-0 w-full h-full object-cover">
+                    <span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase shadow-lg">Neural</span>
                 </div>
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
-                    <img src="images/2B50F1EEC591BCEDFFB5F82ED69F59B3.png" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
-                    <span class="absolute top-6 left-6 ai-tag">AI_Synth</span>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/2B50F1EEC591BCEDFFB5F82ED69F59B3.png" class="absolute inset-0 w-full h-full object-cover">
+                    <span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase shadow-lg">Neural</span>
                 </div>
-                <div class="aspect-square relative group overflow-hidden rounded-3xl js-tilt" data-tilt>
-                    <img src="images/470FBA9EFE7E01EB96F8DFB719C62BEA.png" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
-                    <span class="absolute top-6 left-6 ai-tag">AI_Synth</span>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/470FBA9EFE7E01EB96F8DFB719C62BEA.png" class="absolute inset-0 w-full h-full object-cover">
+                    <span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase shadow-lg">Neural</span>
                 </div>
             </div>
         </section>
 
-        <section id="contact" class="py-40 border-t border-white/10 reveal">
-            <h2 class="text-hero text-5xl md:text-[8rem] mb-24 uppercase">
-                <span class="lang-en">Let's build<br>something<br>robust.</span>
-                <span class="lang-zh">共同打造<br>稳健作品。</span>
-            </h2>
-            <div class="grid md:grid-cols-3 gap-16 font-mono text-xs uppercase tracking-[0.3em]">
-                <div class="space-y-4">
-                    <p class="opacity-40">/ Connect_Mail</p>
-                    <a href="mailto:2746783219@qq.com" class="block hover:opacity-50 transition-all underline underline-offset-8 text-sm text-current">2746783219@qq.com</a>
+        <section id="contact" class="py-48 border-t border-current border-opacity-10 reveal">
+            <h2 class="text-6xl md:text-9xl font-bold tracking-tighter mb-20">Let's talk.</h2>
+            <div class="grid md:grid-cols-2 gap-16 text-2xl font-semibold">
+                <div class="space-y-6">
+                    <p class="section-label">Connect</p>
+                    <a href="mailto:2746783219@qq.com" class="block hover:underline underline-offset-[12px] decoration-2">2746783219@qq.com</a>
+                    <a href="https://www.linkedin.com/in/qi-wang-a344a43b4" target="_blank" class="block opacity-80 hover:opacity-100 transition-opacity">LinkedIn</a>
                 </div>
-                <div class="space-y-4">
-                    <p class="opacity-40">/ Social_Node</p>
-                    <div class="flex flex-col gap-4 text-sm">
-                        <a href="https://www.linkedin.com/in/qi-wang-a344a43b4" target="_blank" class="hover:opacity-50 transition-all">LinkedIn</a>
-                        <a href="https://www.upwork.com/freelancers/~0177d0c99169639c79" target="_blank" class="hover:opacity-50 transition-all">Upwork</a>
-                    </div>
-                </div>
-                <div class="space-y-4">
-                    <p class="opacity-40">/ Comm_Link</p>
-                    <p class="text-sm">SYDNEY, NSW // AUSTRALIA</p>
-                    <p class="text-sm">+86 139 5530 0913</p>
+                <div class="space-y-6">
+                    <p class="section-label">Location</p>
+                    <p>Sydney, NSW // Australia</p>
+                    <p class="opacity-80">+86 139 5530 0913</p>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="py-12 border-t border-white/5 text-center font-mono text-[9px] opacity-20 uppercase tracking-[0.5em]">
-        &copy; 2026 QI WANG // ALL RIGHTS RESERVED.
+    <footer class="py-12 border-t border-current border-opacity-5 text-center text-[11px] font-bold opacity-30 uppercase tracking-[0.5em]">
+        &copy; 2026 QI WANG // DESIGNED IN SYDNEY.
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
-        // 初始化 3D 偏转
-        VanillaTilt.init(document.querySelectorAll(".js-tilt"), { max: 3, speed: 400, glare: true, "max-glare": 0.1, scale: 1.01 });
-
-        // 亮暗切换
         function toggleTheme() {
             const body = document.body;
-            const current = body.getAttribute('data-theme');
-            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
         }
 
-        // 核心优化：语言切换 + 简历下载路径同步
         function toggleLang() {
             const body = document.body;
             const current = body.getAttribute('data-lang');
-            // 如果当前是英文，切换到中文
             const newLang = current === 'en' ? 'zh' : 'en';
-            
             body.setAttribute('data-lang', newLang);
-            
-            // 同步更新简历下载链接
-            const resumeBtn = document.getElementById('resume-btn');
-            if (newLang === 'zh') {
-                resumeBtn.href = "Resume_CN.pdf";
-            } else {
-                resumeBtn.href = "Resume_EN.pdf";
-            }
+            document.getElementById('resume-btn').href = newLang === 'zh' ? "Resume_CN.pdf" : "Resume_EN.pdf";
         }
 
-        // 滚动显现动画
+        VanillaTilt.init(document.querySelectorAll(".js-tilt"), { max: 4, speed: 1000, glare: true, "max-glare": 0.1 });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qi Wang | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Helvetica Neue', 'Noto Sans SC', 'sans-serif'],
+                        mono: ['SF Mono', 'JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --text-main: #1d1d1f;
+            --text-sub: #424245;
+            --label: #86868b;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --border: rgba(0, 0, 0, 0.1);
+            --accent: #0071e3;
+        }
+
+        [data-theme="dark"] {
+            --bg: #000000;
+            --text-main: #f5f5f7;
+            --text-sub: #d2d2d7;
+            --label: #86868b;
+            --card-bg: rgba(28, 28, 30, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #00d4ff;
+        }
+
+        html { scroll-behavior: smooth; transition: background-color 0.5s ease; }
+        body { 
+            background-color: var(--bg); 
+            color: var(--text-main); 
+            -webkit-font-smoothing: antialiased; 
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        body[data-lang="en"] .lang-zh { display: none; }
+        body[data-lang="zh"] .lang-en { display: none; }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.15, 0, 0.15, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .apple-glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.15, 0, 0.15, 1);
+        }
+
+        .text-hero {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        
+        /* 分点小字强化：确保能看清 */
+        .section-label {
+            color: var(--label);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="antialiased" data-lang="en" data-theme="dark">
+
+    <div class="fixed inset-0 pointer-events-none opacity-20" style="background-image: radial-gradient(var(--accent) 0.5px, transparent 0.5px); background-size: 30px 30px;"></div>
+
+    <header class="fixed top-0 w-full z-50 bg-opacity-70 backdrop-blur-xl border-b border-white/5 transition-all">
+        <nav class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-xl font-bold tracking-tight">Qi Wang</span>
+                <span class="hidden md:inline font-mono text-[10px] opacity-40 uppercase tracking-widest">USYD // v.5.6</span>
+            </div>
+            
+            <div class="flex items-center gap-6 text-[12px] font-bold uppercase tracking-widest">
+                <button onclick="toggleTheme()" class="text-lg hover:scale-110 transition-transform">🌓</button>
+                <button onclick="toggleLang()" class="border-b border-current hover:opacity-50 transition-all px-1">
+                    <span class="lang-en">ZH / 中</span><span class="lang-zh">EN / 英</span>
+                </button>
+                <a id="resume-btn" href="Resume_EN.pdf" download class="px-6 py-2 bg-[#1d1d1f] dark:bg-[#f5f5f7] text-white dark:text-black rounded-full font-bold transition-all hover:opacity-80 active:scale-95 shadow-sm">
+                    RESUME
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pt-32">
+        
+        <section class="py-32 md:py-48 reveal">
+            <div class="mb-10 font-mono text-[11px] tracking-[0.6em] opacity-40 uppercase flex items-center gap-4">
+                <span class="inline-block w-2 h-2 rounded-full bg-[#00d4ff] shadow-[0_0_8px_#00d4ff] animate-pulse"></span>
+                <span>System Status: Nominal</span>
+                <span class="hidden md:inline opacity-30">//</span>
+                <span class="hidden md:inline">Loc: 33.8688° S, 151.2093° E</span>
+                <span class="hidden lg:inline opacity-30">//</span>
+                <span class="hidden lg:inline">Core_Temp: Stable</span>
+            </div>
+
+            <h1 class="text-hero text-5xl md:text-7xl mb-12">
+                <span class="lang-en">Engineering Precision.<br><span style="color: var(--label)">Visual Mastery.</span></span>
+                <span class="lang-zh">工程的精度。<br><span style="color: var(--label)">视觉的造诣。</span></span>
+            </h1>
+            <p class="text-xl md:text-2xl max-w-2xl leading-relaxed font-medium" style="color: var(--text-sub)">
+                <span class="lang-en">USYD Mechanical Engineering. Specialist in 7-DOF Vehicle Dynamics & GA-PID Control.</span>
+                <span class="lang-zh">悉尼大学机械工程。专注于七自由度动力学仿真、遗传算法控制优化及 500px 签约商业摄影。</span>
+            </p>
+        </section>
+
+        <section id="about" class="py-24 border-t border-current border-opacity-10 grid md:grid-cols-3 gap-12 reveal">
+            <div class="section-label">/ 01. Profile Summary</div>
+            <div class="md:col-span-2 space-y-10">
+                <p class="text-2xl md:text-3xl font-semibold leading-snug">
+                    <span class="lang-en">Expert in translating complex physics into robust engineering solutions via <span class="text-blue-500">MATLAB/Simulink</span> and <span class="text-blue-500">ADAMS</span>.</span>
+                    <span class="lang-zh">精通利用 <span class="text-blue-500">MATLAB/Simulink</span> 和 <span class="text-blue-500">ADAMS</span> 将复杂的物理系统转化为稳健的工程算法。</span>
+                </p>
+                <div class="py-6 font-mono text-xl text-blue-500 opacity-80">
+                    $$\min J = \int_{0}^{\infty} [q z_c^2(t) + r u^2(t)] dt$$
+                </div>
+                <p class="text-lg leading-relaxed font-medium" style="color: var(--text-sub)">
+                    <span class="lang-en">As a <strong style="color: var(--text-main)">500px contracted photographer</strong>, I bridge technical rigor with visual aesthetics through high-end technical visualizations.</span>
+                    <span class="lang-zh">作为 <strong style="color: var(--text-main)">500px 签约摄影师</strong>，我致力于在工程严谨性与美学感召力之间建立直观的视觉联系。</span>
+                </p>
+            </div>
+        </section>
+
+        <section id="engineering" class="py-24 border-t border-current border-opacity-10">
+            <div class="mb-20 reveal">
+                <div class="section-label mb-4">/ 02. Engineering Works</div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="apple-glass rounded-[2.5rem] p-10 group reveal js-tilt" data-tilt>
+                    <h3 class="text-2xl font-bold mb-8 tracking-tight">7-DOF Suspension</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <img src="images/c35139d040d8c48c577d37ccaff4fabe.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="images/08458e2f4ddfef8fe46de75e12093f77.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                    </div>
+                    <p class="text-xl font-bold mb-2">58.7% RMS Reduction</p>
+                    <p class="text-base leading-relaxed font-medium" style="color: var(--text-sub)">
+                        <span class="lang-en">Optimization of semi-active suspension via GA-PID control.</span>
+                        <span class="lang-zh">通过遗传算法优化的 PID 策略，大幅提升车辆行驶平顺性。</span>
+                    </p>
+                </div>
+
+                <div class="apple-glass rounded-[2.5rem] p-10 group reveal js-tilt" data-tilt>
+                    <h3 class="text-2xl font-bold mb-8 tracking-tight">Mechanism Design</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <img src="images/cb7791086333d4d69f2aff3d8a59ee66.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                        <img src="images/73e17f49ad824ee0d5a4c1752d363e1b.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                    </div>
+                    <p class="text-xl font-bold mb-2">774 Component Assembly</p>
+                    <p class="text-base leading-relaxed font-medium" style="color: var(--text-sub)">
+                        <span class="lang-en">Full SolidWorks assembly and FEA stress analysis verification.</span>
+                        <span class="lang-zh">基于 SolidWorks 的全比例装配及有限元应力动态验证。</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="visual" class="py-24 border-t border-current border-opacity-10">
+            <div class="mb-20 reveal">
+                <div class="section-label mb-6">/ 03. Visual Arts</div>
+                <h2 class="text-4xl font-bold tracking-tight">Nature & Urban</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-32 reveal">
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/mountain.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s]">
+                </div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/moon.png" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
+                </div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/night.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
+                </div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/c73c93200937771ab11bd38626287762.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
+                </div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/city-night-2.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
+                </div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/0778d39c7f0697d71ed01503a4294365.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all">
+                </div>
+            </div>
+
+            <div class="mb-12 reveal">
+                <h2 class="text-4xl font-bold tracking-tight mb-4">Neural Synthesis</h2>
+                <p class="text-lg opacity-50 font-light">AI-assisted visual experimentation.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 reveal">
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/Gemini_Generated_Image_j28htxj28htxj28h.png" class="absolute inset-0 w-full h-full object-cover">
+                    <span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase shadow-lg">Neural</span>
+                </div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/2B50F1EEC591BCEDFFB5F82ED69F59B3.png" class="absolute inset-0 w-full h-full object-cover">
+                    <span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase shadow-lg">Neural</span>
+                </div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt>
+                    <img src="images/470FBA9EFE7E01EB96F8DFB719C62BEA.png" class="absolute inset-0 w-full h-full object-cover">
+                    <span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase shadow-lg">Neural</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-48 border-t border-current border-opacity-10 reveal">
+            <h2 class="text-6xl md:text-9xl font-bold tracking-tighter mb-20">Let's talk.</h2>
+            <div class="grid md:grid-cols-2 gap-16 text-2xl font-semibold">
+                <div class="space-y-6">
+                    <p class="section-label">Connect</p>
+                    <a href="mailto:2746783219@qq.com" class="block hover:underline underline-offset-[12px] decoration-2">2746783219@qq.com</a>
+                    <a href="https://www.linkedin.com/in/qi-wang-a344a43b4" target="_blank" class="block opacity-80 hover:opacity-100 transition-opacity">LinkedIn</a>
+                </div>
+                <div class="space-y-6">
+                    <p class="section-label">Location</p>
+                    <p>Sydney, NSW // Australia</p>
+                    <p class="opacity-80">+86 139 5530 0913</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-12 border-t border-current border-opacity-5 text-center text-[11px] font-bold opacity-30 uppercase tracking-[0.5em]">
+        &copy; 2026 QI WANG // DESIGNED IN SYDNEY.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+        }
+
+        function toggleLang() {
+            const body = document.body;
+            const current = body.getAttribute('data-lang');
+            const newLang = current === 'en' ? 'zh' : 'en';
+            body.setAttribute('data-lang', newLang);
+            document.getElementById('resume-btn').href = newLang === 'zh' ? "Resume_CN.pdf" : "Resume_EN.pdf";
+        }
+
+        VanillaTilt.init(document.querySelectorAll(".js-tilt"), { max: 4, speed: 1000, glare: true, "max-glare": 0.1 });
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
