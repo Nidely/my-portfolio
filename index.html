@@ -18,7 +18,7 @@
         }
     </script>
     <style>
-        /* --- 黑白美学变量控制 --- */
+        /* --- 核心变量控制 --- */
         :root {
             --bg: #ffffff;
             --text-main: #000000;
@@ -49,11 +49,10 @@
             overflow-x: hidden;
         }
 
-        /* 语言显示切换 */
+        /* 核心语言切换逻辑：隐藏非当前语言的标签 */
         body[data-lang="en"] .lang-zh { display: none; }
         body[data-lang="zh"] .lang-en { display: none; }
 
-        /* 背景网格 */
         .bg-grid {
             background-image: linear-gradient(var(--grid) 1px, transparent 1px),
                               linear-gradient(90deg, var(--grid) 1px, transparent 1px);
@@ -61,7 +60,6 @@
             mask-image: radial-gradient(circle at center, black, transparent 85%);
         }
 
-        /* 苹果风格阻尼动画 */
         .reveal {
             opacity: 0;
             transform: translateY(30px) scale(0.98);
@@ -70,7 +68,6 @@
         }
         .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
 
-        /* 高级感卡片 */
         .premium-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -81,7 +78,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        /* 标题排版 */
         .text-hero {
             font-weight: 800;
             letter-spacing: -0.05em;
@@ -108,14 +104,20 @@
         <nav class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <span class="text-2xl font-black uppercase tracking-tighter">Qi Wang</span>
-                <span class="hidden md:inline font-mono text-[10px] opacity-40 tracking-widest">SYDNEY // v.5.0</span>
+                <span class="hidden md:inline font-mono text-[10px] opacity-40 tracking-widest">SYDNEY // v.5.1</span>
             </div>
             
             <div class="flex items-center gap-6 text-[12px] font-bold uppercase tracking-widest">
                 <button onclick="toggleTheme()" class="text-lg hover:scale-110 transition-transform">🌓</button>
-                <button onclick="toggleLang()" class="border-b-2 border-current hover:opacity-50 transition-all">CN/EN</button>
-                <a id="resume-btn" href="Resume_EN.pdf" download class="px-6 py-2 rounded-full transition-all hover:shadow-lg active:scale-95" style="background: var(--btn-bg); color: var(--btn-text)">
-                    RESUME
+                
+                <button onclick="toggleLang()" class="border-b-2 border-current hover:opacity-50 transition-all">
+                    <span class="lang-en">ZH / EN</span>
+                    <span class="lang-zh">EN / 中</span>
+                </button>
+
+                <a id="resume-btn" href="Resume_EN.pdf" download class="px-6 py-2 rounded-full transition-all hover:shadow-lg active:scale-95 font-black" style="background: var(--btn-bg); color: var(--btn-text)">
+                    <span class="lang-en">RESUME</span>
+                    <span class="lang-zh">下载简历</span>
                 </a>
             </div>
         </nav>
@@ -136,7 +138,10 @@
         </section>
 
         <section id="about" class="py-24 border-t border-white/10 grid md:grid-cols-3 gap-16 reveal">
-            <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em]">/ 01. Profile Summary</div>
+            <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em]">
+                <span class="lang-en">/ 01. Profile Summary</span>
+                <span class="lang-zh">/ 01. 个人概述</span>
+            </div>
             <div class="md:col-span-2 space-y-8 text-xl md:text-2xl font-light leading-snug">
                 <p>
                     <span class="lang-en">Incoming Master’s student at <strong class="font-bold">The University of Sydney</strong>. Proficient in MATLAB/Simulink and ADAMS for complex system modeling.</span>
@@ -147,54 +152,50 @@
                 </div>
                 <p>
                     <span class="lang-en">As a <strong class="font-bold">500px contracted photographer</strong>, I bridge technical precision with visual aesthetics.</span>
-                    <span class="lang-zh">作为 <strong class="font-bold">500px 签约摄影师</strong>，我致力于在工程严谨性与视觉美学之间建立联系。</span>
+                    <span class="lang-zh">作为 <strong class="font-bold">500px 签约摄影师</strong>，我致力于在工程严谨性与美学感召力之间建立联系。</span>
                 </p>
             </div>
         </section>
 
         <section id="engineering" class="py-24 border-t border-white/10">
             <div class="mb-20 flex justify-between items-end reveal">
-                <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em]">/ 02. Engineering Portfolio</div>
+                <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em]">
+                    <span class="lang-en">/ 02. Engineering Portfolio</span>
+                    <span class="lang-zh">/ 02. 工程项目作品集</span>
+                </div>
                 <div class="font-mono text-[10px] opacity-40 tracking-widest uppercase">Executing_Terminal_Mode</div>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8">
+            <div class="grid md:grid-cols-2 gap-12">
                 <div class="premium-card rounded-3xl p-10 group reveal js-tilt" data-tilt>
                     <span class="font-mono text-[10px] opacity-40">CONTROL_SYSTEMS</span>
-                    <h3 class="text-2xl font-bold mt-4 mb-8">7-DOF Semi-Active Suspension</h3>
+                    <h3 class="text-2xl font-bold mt-4 mb-8">
+                        <span class="lang-en">7-DOF Semi-Active Suspension</span>
+                        <span class="lang-zh">七自由度半主动悬架控制</span>
+                    </h3>
                     <div class="grid grid-cols-2 gap-3 mb-8">
                         <img src="images/c35139d040d8c48c577d37ccaff4fabe.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
                         <img src="images/08458e2f4ddfef8fe46de75e12093f77.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
                     </div>
                     <p class="text-sm opacity-60 leading-relaxed font-light">
                         <span class="lang-en">Achieved <strong class="text-current font-bold">58.7% reduction</strong> in vertical acceleration RMS using GA-PID.</span>
-                        <span class="lang-zh">利用遗传算法优化的 PID 策略，实现加速度均方根值 <strong class="font-bold">58.7% 的大幅降低</strong>。</span>
+                        <span class="lang-zh">利用遗传算法优化的 PID 策略，实现加速度均方根值 <strong class="font-bold text-current">58.7% 的降幅</strong>。</span>
                     </p>
                 </div>
 
                 <div class="premium-card rounded-3xl p-10 group reveal js-tilt" data-tilt style="transition-delay: 100ms;">
                     <span class="font-mono text-[10px] opacity-40">MECHANICAL_DESIGN</span>
-                    <h3 class="text-2xl font-bold mt-4 mb-8">Steel Plate Turning System</h3>
+                    <h3 class="text-2xl font-bold mt-4 mb-8">
+                        <span class="lang-en">Steel Plate Turning System</span>
+                        <span class="lang-zh">钢板翻转机构综合设计</span>
+                    </h3>
                     <div class="grid grid-cols-2 gap-3 mb-8">
                         <img src="images/cb7791086333d4d69f2aff3d8a59ee66.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
                         <img src="images/73e17f49ad824ee0d5a4c1752d363e1b.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
                     </div>
                     <p class="text-sm opacity-60 leading-relaxed font-light">
                         <span class="lang-en">Modeled <strong class="text-current font-bold">774 individual components</strong> in SolidWorks with FEA analysis.</span>
-                        <span class="lang-zh">完成了 <strong class="font-bold">774 个独立零件</strong> 的精密建模，并通过有限元应力分析验证。</span>
-                    </p>
-                </div>
-
-                <div class="premium-card rounded-3xl p-10 group reveal js-tilt" data-tilt style="transition-delay: 200ms;">
-                    <span class="font-mono text-[10px] opacity-40">INTELLIGENT_OPTIMIZATION</span>
-                    <h3 class="text-2xl font-bold mt-4 mb-8">Pantograph Wire Guide</h3>
-                    <div class="grid grid-cols-2 gap-3 mb-8">
-                        <img src="images/826c6ebd1a1ce9c5a24648ea74c346f3.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
-                        <img src="images/bf1ef677d258b2b566671c3dee84b52c.png" class="aspect-[4/3] object-contain bg-white rounded-xl p-2 grayscale hover:grayscale-0 transition-all">
-                    </div>
-                    <p class="text-sm opacity-60 leading-relaxed font-light">
-                        <span class="lang-en">Optimized operational durability via ADAMS simulation & Genetic Algorithm (GA) contour calculation.</span>
-                        <span class="lang-zh">基于 ADAMS 仿真与遗传算法，开发了受电弓导流板新型轮廓优化方案。</span>
+                        <span class="lang-zh">在 SolidWorks 中完成了 <strong class="font-bold text-current">774 个零件</strong> 的精密建模，并通过有限元应力分析验证。</span>
                     </p>
                 </div>
             </div>
@@ -202,8 +203,11 @@
 
         <section id="visual" class="py-24 border-t border-white/10">
             <div class="mb-16 reveal">
-                <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em] mb-4">/ 03. Visual Portfolio</div>
-                <h2 class="text-4xl font-black italic uppercase">Nature & Urban // 实拍摄影</h2>
+                <div class="font-mono text-xs opacity-40 uppercase tracking-[0.3em] mb-4">
+                    <span class="lang-en">/ 03. Visual Portfolio</span>
+                    <span class="lang-zh">/ 03. 视觉艺术作品集</span>
+                </div>
+                <h2 class="text-4xl font-black italic uppercase">Nature & Urban // <span class="lang-zh">实拍摄影</span><span class="lang-en">Photography</span></h2>
             </div>
             
             <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-24 reveal">
@@ -228,7 +232,7 @@
             </div>
 
             <div class="mb-12 reveal">
-                <h2 class="text-4xl font-black italic uppercase">Neural Synthesis // AI 艺术</h2>
+                <h2 class="text-4xl font-black italic uppercase">Neural Synthesis // <span class="lang-zh">AI 艺术</span><span class="lang-en">AI Art</span></h2>
                 <p class="font-mono text-[10px] opacity-40 mt-2 uppercase tracking-widest">AI Assisted Visionary Assets</p>
             </div>
 
@@ -256,7 +260,7 @@
             <div class="grid md:grid-cols-3 gap-16 font-mono text-xs uppercase tracking-[0.3em]">
                 <div class="space-y-4">
                     <p class="opacity-40">/ Connect_Mail</p>
-                    <a href="mailto:2746783219@qq.com" class="block hover:opacity-50 transition-all underline underline-offset-8 text-sm">2746783219@qq.com</a>
+                    <a href="mailto:2746783219@qq.com" class="block hover:opacity-50 transition-all underline underline-offset-8 text-sm text-current">2746783219@qq.com</a>
                 </div>
                 <div class="space-y-4">
                     <p class="opacity-40">/ Social_Node</p>
@@ -266,7 +270,8 @@
                     </div>
                 </div>
                 <div class="space-y-4">
-                    <p class="opacity-40">/ Phone_Link</p>
+                    <p class="opacity-40">/ Comm_Link</p>
+                    <p class="text-sm">SYDNEY, NSW // AUSTRALIA</p>
                     <p class="text-sm">+86 139 5530 0913</p>
                 </div>
             </div>
@@ -292,17 +297,25 @@
             body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         }
 
-        // 语言切换 + 简历下载逻辑
+        // 核心优化：语言切换 + 简历下载路径同步
         function toggleLang() {
             const body = document.body;
             const current = body.getAttribute('data-lang');
+            // 如果当前是英文，切换到中文
             const newLang = current === 'en' ? 'zh' : 'en';
+            
             body.setAttribute('data-lang', newLang);
-            const btn = document.getElementById('resume-btn');
-            btn.href = newLang === 'zh' ? "Resume_CN.pdf" : "Resume_EN.pdf";
+            
+            // 同步更新简历下载链接
+            const resumeBtn = document.getElementById('resume-btn');
+            if (newLang === 'zh') {
+                resumeBtn.href = "Resume_CN.pdf";
+            } else {
+                resumeBtn.href = "Resume_EN.pdf";
+            }
         }
 
-        // 滚动监听
+        // 滚动显现动画
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
