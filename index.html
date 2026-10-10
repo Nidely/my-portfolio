@@ -1,10 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Qi Wang 王祺 | Engineering &amp; Visual Portfolio</title>
     <meta name="description" content="Qi Wang, Master of Engineering student at the University of Sydney. SolidWorks modeling, mechanical design and simulation projects; photography and AI-assisted visual experiments.">
+    <script id="portfolio-preferences">
+window.portfolioPreferences = (() => {
+    const keys = {
+        language: 'qi-wang-portfolio.language.v1',
+        theme: 'qi-wang-portfolio.theme.v1'
+    };
+    const chineseTimeZones = new Set([
+        'Asia/Shanghai', 'Asia/Chongqing', 'Asia/Chungking', 'Asia/Harbin',
+        'Asia/Urumqi', 'Asia/Hong_Kong', 'Asia/Macau', 'Asia/Macao',
+        'Asia/Taipei', 'PRC', 'ROC'
+    ]);
+
+    function readChoice(key, choices) {
+        try {
+            const value = window.localStorage.getItem(key);
+            return choices.includes(value) ? value : null;
+        } catch { return null; }
+    }
+
+    function saveChoice(key, value) {
+        try { window.localStorage.setItem(key, value); } catch {}
+    }
+
+    let languageChoice = readChoice(keys.language, ['zh', 'en']);
+    let themeChoice = readChoice(keys.theme, ['dark', 'light']);
+    let started = false;
+
+    function automaticLanguage() {
+        let zone = '';
+        try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch {}
+        if (zone) return chineseTimeZones.has(zone) ? 'zh' : 'en';
+        const browserLanguage = navigator.language || '';
+        return /^zh(?:-|$)/i.test(browserLanguage) ? 'zh' : 'en';
+    }
+
+    function automaticTheme() {
+        const hour = new Date().getHours();
+        if (Number.isFinite(hour)) return hour >= 7 && hour < 19 ? 'light' : 'dark';
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function apply() {
+        const language = languageChoice || automaticLanguage();
+        const theme = themeChoice || automaticTheme();
+        const root = document.documentElement;
+        root.dataset.lang = language;
+        root.dataset.theme = theme;
+        root.dataset.languageMode = languageChoice ? 'manual' : 'auto';
+        root.dataset.themeMode = themeChoice ? 'manual' : 'auto';
+        root.lang = language === 'zh' ? 'zh-CN' : 'en';
+        root.style.colorScheme = theme;
+        if (document.body) {
+            document.body.dataset.lang = language;
+            document.body.dataset.theme = theme;
+        }
+
+        const resume = document.getElementById('resume-btn');
+        if (resume) resume.setAttribute('href', language === 'zh' ? 'Resume_CN.pdf' : 'Resume_EN.pdf');
+        const languageButton = document.getElementById('language-btn');
+        if (languageButton) languageButton.setAttribute('aria-label', language === 'zh' ? 'Switch to English' : '切换到中文');
+        const themeButton = document.getElementById('theme-btn');
+        if (themeButton) {
+            themeButton.setAttribute('aria-label', language === 'zh'
+                ? (theme === 'dark' ? '切换至浅色模式' : '切换至深色模式')
+                : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'));
+        }
+        const automaticButton = document.getElementById('auto-preferences-btn');
+        if (automaticButton) {
+            const label = language === 'zh' ? '恢复按时区自动设置语言和外观' : 'Restore automatic language and local-time appearance';
+            automaticButton.setAttribute('aria-label', label);
+            automaticButton.setAttribute('title', label);
+        }
+        return { language, theme };
+    }
+
+    function setLanguage(value) {
+        if (!['zh', 'en'].includes(value)) return apply();
+        languageChoice = value;
+        saveChoice(keys.language, value);
+        return apply();
+    }
+
+    function setTheme(value) {
+        if (!['dark', 'light'].includes(value)) return apply();
+        themeChoice = value;
+        saveChoice(keys.theme, value);
+        return apply();
+    }
+
+    function reset() {
+        languageChoice = null;
+        themeChoice = null;
+        try {
+            window.localStorage.removeItem(keys.language);
+            window.localStorage.removeItem(keys.theme);
+        } catch {}
+        return apply();
+    }
+
+    function start() {
+        apply();
+        if (started) return;
+        started = true;
+        window.setInterval(() => {
+            if (document.visibilityState !== 'hidden') apply();
+        }, 60000);
+        window.addEventListener('focus', apply);
+        window.addEventListener('pageshow', apply);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState !== 'hidden') apply();
+        });
+        window.addEventListener('storage', event => {
+            if (event.key && event.key !== keys.language && event.key !== keys.theme) return;
+            languageChoice = readChoice(keys.language, ['zh', 'en']);
+            themeChoice = readChoice(keys.theme, ['dark', 'light']);
+            apply();
+        });
+    }
+
+    return { apply, setLanguage, setTheme, reset, start };
+})();
+window.portfolioPreferences.apply();
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         if (window.tailwind) tailwind.config = {
@@ -48,8 +171,8 @@
             overflow-x: hidden;
         }
 
-        body[data-lang="en"] .lang-zh { display: none; }
-        body[data-lang="zh"] .lang-en { display: none; }
+        html[data-lang="en"] .lang-zh { display: none; }
+        html[data-lang="zh"] .lang-en { display: none; }
 
         .reveal {
             opacity: 1;
@@ -136,9 +259,11 @@
             .apple-glass:hover { --hover-y: 0px; }
             .gallery-tile:hover, .gallery-tile:hover img, button:active, a[download]:active { transform: none; }
         }
+        .auto-preferences-control { padding: 9px 16px; border: 1px solid var(--border); border-radius: 999px; background: var(--card-bg); color: var(--text-sub); letter-spacing: .03em; }
+        .auto-preferences-control:active { transform: scale(.96); }
     </style>
 </head>
-<body class="antialiased" data-lang="en" data-theme="dark">
+<body class="antialiased">
 
     <div class="page-backdrop fixed inset-0 pointer-events-none opacity-20" style="background-image: radial-gradient(var(--accent) 0.5px, transparent 0.5px); background-size: 30px 30px;"></div>
 
@@ -319,28 +444,38 @@
     </main>
 
     <footer class="py-12 border-t border-current border-opacity-5 text-center text-[11px] font-bold uppercase tracking-[0.15em]">
+        <div class="mb-6">
+            <button id="auto-preferences-btn" type="button" onclick="resetAutoPreferences()" class="auto-preferences-control" aria-label="Restore automatic language and local-time appearance">
+                <span class="lang-en">Use automatic settings</span><span class="lang-zh">恢复自动设置</span>
+            </button>
+        </div>
         &copy; 2026 QI WANG // DESIGNED IN SYDNEY.
     </footer>
 
     <script>
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const preferences = window.portfolioPreferences;
+        preferences.start();
 
-        function toggleTheme() {
-            const next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-            document.body.dataset.theme = next;
-            document.getElementById('theme-btn').setAttribute('aria-label', next === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
-        }
-
-        function toggleLang() {
-            const next = document.body.dataset.lang === 'en' ? 'zh' : 'en';
-            document.body.dataset.lang = next;
-            document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
-            document.getElementById('resume-btn').href = next === 'zh' ? 'Resume_CN.pdf' : 'Resume_EN.pdf';
-            document.getElementById('language-btn').setAttribute('aria-label', next === 'zh' ? 'Switch to English' : '切换到中文');
+        function animateLanguageChange() {
             const main = document.querySelector('main');
             if (!reducedMotion.matches && main.animate) {
                 main.animate([{ opacity: .45, transform: 'translateY(4px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 280, easing: 'cubic-bezier(.22,1,.36,1)' });
             }
+        }
+
+        function toggleTheme() {
+            preferences.setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        }
+
+        function toggleLang() {
+            preferences.setLanguage(document.documentElement.dataset.lang === 'en' ? 'zh' : 'en');
+            animateLanguageChange();
+        }
+
+        function resetAutoPreferences() {
+            preferences.reset();
+            animateLanguageChange();
         }
 
         const header = document.querySelector('.site-header');
@@ -372,4 +507,5 @@
     </script>
 </body>
 </html>
+
 
