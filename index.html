@@ -1,511 +1,289 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qi Wang 王祺 | Engineering &amp; Visual Portfolio</title>
-    <meta name="description" content="Qi Wang, Master of Engineering student at the University of Sydney. SolidWorks modeling, mechanical design and simulation projects; photography and AI-assisted visual experiments.">
-    <script id="portfolio-preferences">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Qi Wang 王祺 | Engineering &amp; Visual Portfolio</title>
+  <meta name="description" content="Qi Wang 王祺 — University of Sydney engineering postgraduate. SolidWorks modeling, mechanical design and simulation projects; photography and AI-assisted visual work.">
+  <link rel="canonical" href="https://nidely.github.io/my-portfolio/">
+  <meta property="og:type" content="website"><meta property="og:url" content="https://nidely.github.io/my-portfolio/">
+  <meta property="og:title" content="Qi Wang 王祺 | Engineering &amp; Visual Portfolio">
+  <meta property="og:description" content="University of Sydney · Computational Engineering · SolidWorks · Mechanical design &amp; simulation">
+  <meta property="og:image" content="https://nidely.github.io/my-portfolio/assets/share-cover.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Qi Wang 王祺 — Engineering and Visual Portfolio">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Qi Wang 王祺 | Engineering &amp; Visual Portfolio"><meta name="twitter:image" content="https://nidely.github.io/my-portfolio/assets/share-cover.png">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="icon" href="assets/favicon.png" type="image/png"><link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <script id="portfolio-preferences">/* Applied inline in <head> so language and appearance are set before paint. */
 window.portfolioPreferences = (() => {
     const keys = {
         language: 'qi-wang-portfolio.language.v1',
+        languageSource: 'qi-wang-portfolio.language-source.v1',
         theme: 'qi-wang-portfolio.theme.v1'
     };
-    const chineseTimeZones = new Set([
-        'Asia/Shanghai', 'Asia/Chongqing', 'Asia/Chungking', 'Asia/Harbin',
-        'Asia/Urumqi', 'Asia/Hong_Kong', 'Asia/Macau', 'Asia/Macao',
-        'Asia/Taipei', 'PRC', 'ROC'
-    ]);
-
-    function readChoice(key, choices) {
-        try {
-            const value = window.localStorage.getItem(key);
-            return choices.includes(value) ? value : null;
-        } catch { return null; }
-    }
-
-    function saveChoice(key, value) {
-        try { window.localStorage.setItem(key, value); } catch {}
-    }
-
-    let languageChoice = readChoice(keys.language, ['zh', 'en']);
-    let themeChoice = readChoice(keys.theme, ['dark', 'light']);
+    const chineseZones = new Set(['Asia/Shanghai', 'Asia/Chongqing', 'Asia/Chungking', 'Asia/Harbin', 'Asia/Urumqi', 'Asia/Hong_Kong', 'Asia/Macau', 'Asia/Macao', 'Asia/Taipei', 'PRC', 'ROC']);
+    const read = (key, choices) => {
+        try { const value = localStorage.getItem(key); return choices.includes(value) ? value : null; }
+        catch { return null; }
+    };
+    const save = (key, value) => {
+        try { value === null ? localStorage.removeItem(key) : localStorage.setItem(key, value); }
+        catch { /* Keep this page usable when storage is unavailable. */ }
+    };
+    let languageChoice = read(keys.language, ['zh', 'en']);
+    let languageSource = read(keys.languageSource, ['timezone', 'browser']) || 'timezone';
+    let themeChoice = read(keys.theme, ['light', 'dark', 'system']);
     let started = false;
+    const systemTheme = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
-    function automaticLanguage() {
+    function browserLanguage() {
+        const languages = navigator.languages?.length ? navigator.languages : [navigator.language || ''];
+        for (const language of languages) {
+            if (/^zh(?:-|$)/i.test(language)) return 'zh';
+            if (/^en(?:-|$)/i.test(language)) return 'en';
+        }
+        return null;
+    }
+
+    function timezoneLanguage() {
         let zone = '';
         try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch {}
-        if (zone) return chineseTimeZones.has(zone) ? 'zh' : 'en';
-        const browserLanguage = navigator.language || '';
-        return /^zh(?:-|$)/i.test(browserLanguage) ? 'zh' : 'en';
+        return zone ? (chineseZones.has(zone) ? 'zh' : 'en') : (browserLanguage() || 'en');
     }
 
     function automaticTheme() {
+        if (themeChoice === 'system') return systemTheme?.matches ? 'dark' : 'light';
         const hour = new Date().getHours();
-        if (Number.isFinite(hour)) return hour >= 7 && hour < 19 ? 'light' : 'dark';
-        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        return Number.isFinite(hour) ? (hour >= 7 && hour < 19 ? 'light' : 'dark') : (systemTheme?.matches ? 'dark' : 'light');
     }
 
     function apply() {
-        const language = languageChoice || automaticLanguage();
-        const theme = themeChoice || automaticTheme();
+        const language = languageChoice || (languageSource === 'browser' ? browserLanguage() || timezoneLanguage() : timezoneLanguage());
+        const theme = ['light', 'dark'].includes(themeChoice) ? themeChoice : automaticTheme();
+        const languageSetting = languageChoice || languageSource;
+        const themeSetting = themeChoice || 'time';
         const root = document.documentElement;
         root.dataset.lang = language;
         root.dataset.theme = theme;
         root.dataset.languageMode = languageChoice ? 'manual' : 'auto';
-        root.dataset.themeMode = themeChoice ? 'manual' : 'auto';
+        root.dataset.themeMode = ['light', 'dark'].includes(themeChoice) ? 'manual' : 'auto';
+        root.dataset.languageSource = languageSource;
+        root.dataset.themeSource = themeSetting;
         root.lang = language === 'zh' ? 'zh-CN' : 'en';
         root.style.colorScheme = theme;
-        if (document.body) {
-            document.body.dataset.lang = language;
-            document.body.dataset.theme = theme;
-        }
-
         const resume = document.getElementById('resume-btn');
-        if (resume) resume.setAttribute('href', language === 'zh' ? 'Resume_CN.pdf' : 'Resume_EN.pdf');
+        if (resume) resume.href = language === 'zh' ? 'Resume_CN.pdf' : 'Resume_EN.pdf';
         const languageButton = document.getElementById('language-btn');
         if (languageButton) languageButton.setAttribute('aria-label', language === 'zh' ? 'Switch to English' : '切换到中文');
         const themeButton = document.getElementById('theme-btn');
-        if (themeButton) {
-            themeButton.setAttribute('aria-label', language === 'zh'
-                ? (theme === 'dark' ? '切换至浅色模式' : '切换至深色模式')
-                : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'));
+        if (themeButton) themeButton.setAttribute('aria-label', language === 'zh' ? (theme === 'dark' ? '切换至浅色模式' : '切换至深色模式') : (theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'));
+        document.querySelectorAll('[data-label-en]').forEach(element => element.setAttribute('aria-label', element.dataset[language === 'zh' ? 'labelZh' : 'labelEn']));
+        document.querySelectorAll('[data-text-en]').forEach(element => { element.textContent = element.dataset[language === 'zh' ? 'textZh' : 'textEn']; });
+        const languageSelect = document.getElementById('language-setting');
+        if (languageSelect) languageSelect.value = languageSetting;
+        const themeSelect = document.getElementById('theme-setting');
+        if (themeSelect) themeSelect.value = themeSetting;
+        const status = document.getElementById('preference-status');
+        if (status) {
+            const langMode = languageChoice ? (language === 'zh' ? '手动' : 'manual') : (language === 'zh' ? '自动' : 'automatic');
+            const appearanceMode = ['light', 'dark'].includes(themeChoice) ? (language === 'zh' ? '手动' : 'manual') : (language === 'zh' ? '自动' : 'automatic');
+            status.textContent = language === 'zh'
+                ? `当前：中文（${langMode}） · ${theme === 'dark' ? '暗色' : '明亮'}（${appearanceMode}）`
+                : `Current: English (${langMode}) · ${theme === 'dark' ? 'Dark' : 'Light'} (${appearanceMode})`;
         }
-        const automaticButton = document.getElementById('auto-preferences-btn');
-        if (automaticButton) {
-            const label = language === 'zh' ? '恢复按时区自动设置语言和外观' : 'Restore automatic language and local-time appearance';
-            automaticButton.setAttribute('aria-label', label);
-            automaticButton.setAttribute('title', label);
-        }
-        return { language, theme };
+        window.dispatchEvent(new CustomEvent('portfolio:preferences', { detail: { language, theme } }));
+        return { language, theme, languageSetting, themeSetting };
     }
 
     function setLanguage(value) {
-        if (!['zh', 'en'].includes(value)) return apply();
-        languageChoice = value;
-        saveChoice(keys.language, value);
+        if (['zh', 'en'].includes(value)) {
+            languageChoice = value;
+            save(keys.language, value);
+        } else if (['timezone', 'browser'].includes(value)) {
+            languageChoice = null;
+            languageSource = value;
+            save(keys.language, null);
+            save(keys.languageSource, value);
+        }
         return apply();
     }
 
     function setTheme(value) {
-        if (!['dark', 'light'].includes(value)) return apply();
-        themeChoice = value;
-        saveChoice(keys.theme, value);
+        if (!['light', 'dark', 'system', 'time'].includes(value)) return apply();
+        themeChoice = value === 'time' ? null : value;
+        save(keys.theme, themeChoice);
         return apply();
     }
 
-    function reset() {
+    function resetLanguage() {
         languageChoice = null;
-        themeChoice = null;
-        try {
-            window.localStorage.removeItem(keys.language);
-            window.localStorage.removeItem(keys.theme);
-        } catch {}
+        languageSource = 'timezone';
+        save(keys.language, null);
+        save(keys.languageSource, null);
         return apply();
     }
+
+    function resetTheme() {
+        themeChoice = null;
+        save(keys.theme, null);
+        return apply();
+    }
+
+    function reset() { resetLanguage(); return resetTheme(); }
 
     function start() {
         apply();
         if (started) return;
         started = true;
-        window.setInterval(() => {
-            if (document.visibilityState !== 'hidden') apply();
-        }, 60000);
-        window.addEventListener('focus', apply);
-        window.addEventListener('pageshow', apply);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState !== 'hidden') apply();
-        });
+        window.setInterval(() => { if (document.visibilityState !== 'hidden') apply(); }, 60000);
+        ['focus', 'pageshow', 'languagechange'].forEach(event => window.addEventListener(event, apply));
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'hidden') apply(); });
+        systemTheme?.addEventListener?.('change', () => { if (themeChoice === 'system') apply(); });
         window.addEventListener('storage', event => {
-            if (event.key && event.key !== keys.language && event.key !== keys.theme) return;
-            languageChoice = readChoice(keys.language, ['zh', 'en']);
-            themeChoice = readChoice(keys.theme, ['dark', 'light']);
+            if (event.key && !Object.values(keys).includes(event.key)) return;
+            languageChoice = read(keys.language, ['zh', 'en']);
+            languageSource = read(keys.languageSource, ['timezone', 'browser']) || 'timezone';
+            themeChoice = read(keys.theme, ['light', 'dark', 'system']);
             apply();
         });
     }
-
-    return { apply, setLanguage, setTheme, reset, start };
+    return { apply, setLanguage, setTheme, resetLanguage, resetTheme, reset, start };
 })();
 window.portfolioPreferences.apply();
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        if (window.tailwind) tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', 'sans-serif'],
-                        mono: ['SF Mono', 'JetBrains Mono', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        :root {
-            --bg: #f5f5f7;
-            --text-main: #1d1d1f;
-            --text-sub: #424245; /* 强化文字深度，确保看清 */
-            --label: #6e6e73;   /* 强化标签对比度 */
-            --card-bg: rgba(255, 255, 255, 0.8);
-            --border: rgba(0, 0, 0, 0.1);
-            --accent: #0071e3;
-        }
-
-        [data-theme="dark"] {
-            --bg: #000000;
-            --text-main: #f5f5f7;
-            --text-sub: #d2d2d7;
-            --label: #a1a1a6;
-            --card-bg: rgba(28, 28, 30, 0.7);
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: #00d4ff;
-        }
-
-        html { scroll-behavior: smooth; transition: background-color 0.5s ease; }
-        body { 
-            background-color: var(--bg); 
-            color: var(--text-main); 
-            -webkit-font-smoothing: antialiased; 
-            transition: background-color 0.45s ease, color 0.45s ease;
-            overflow-x: hidden;
-        }
-
-        html[data-lang="en"] .lang-zh { display: none; }
-        html[data-lang="zh"] .lang-en { display: none; }
-
-        .reveal {
-            opacity: 1;
-            transform: translate3d(0, var(--reveal-y, 0px), 0);
-            transition: opacity 0.65s ease, transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        .apple-glass {
-            background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            transition: all 0.4s cubic-bezier(0.15, 0, 0.15, 1);
-        }
-
-        .text-hero {
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
-        }
-        
-        .section-label {
-            color: var(--label);
-            font-weight: 700;
-            font-size: 0.85rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-        }
-        header { background: var(--card-bg); border-color: var(--border); }
-        .resume-button { background: var(--text-main); color: var(--bg); }
-        button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
-        .project-meta { color: var(--label); font-size: .85rem; line-height: 1.7; }
-        .project-points { color: var(--text-sub); line-height: 1.8; padding-left: 1.2rem; list-style: disc; }
-        .project-points li + li { margin-top: .55rem; }
-        .tool-chip { display: inline-block; padding: .35rem .75rem; margin: 0 .3rem .45rem 0; border: 1px solid var(--border); border-radius: 999px; font-size: .85rem; }
-        section[id] { scroll-margin-top: 6rem; }
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-            *, *::before, *::after { transition: none !important; animation: none !important; }
-        }
-
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; }
-        main, footer { position: relative; z-index: 1; }
-        .page-backdrop { z-index: 0; }
-        .ambient-orb { position: fixed; z-index: 0; pointer-events: none; width: 360px; height: 360px; border-radius: 50%; filter: blur(90px); opacity: .13; }
-        .ambient-one { top: 12%; left: -220px; background: #38bdf8; animation: ambient-drift 18s ease-in-out infinite alternate; }
-        .ambient-two { right: -230px; bottom: 12%; background: #8b5cf6; animation: ambient-drift 22s ease-in-out infinite alternate-reverse; }
-        [data-theme="light"] .ambient-orb { opacity: .09; }
-        @keyframes ambient-drift { from { transform: translate3d(0, -15px, 0); } to { transform: translate3d(45px, 35px, 0); } }
-        .site-header { padding: 12px 16px 0; border: 0; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
-        .site-nav { padding: 14px 20px; border: 1px solid var(--border); border-radius: 26px; background: var(--card-bg); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); box-shadow: 0 8px 28px rgba(0,0,0,.06); transition: box-shadow .4s ease, background-color .4s ease; }
-        .site-header.is-scrolled .site-nav { box-shadow: 0 12px 36px rgba(0,0,0,.12); }
-        .theme-control { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--border); }
-        .language-control { border-radius: 999px; padding: 10px 13px; background: var(--border); letter-spacing: .04em; }
-        .theme-moon, [data-theme="light"] .theme-sun { display: none; }
-        [data-theme="light"] .theme-moon { display: block; }
-        .resume-button { min-height: 38px; display: inline-flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,.1); }
-        button, .resume-button, a[download] { transition: transform .35s cubic-bezier(.22,.8,.3,1.2), opacity .2s ease, background-color .4s ease, box-shadow .3s ease; -webkit-tap-highlight-color: transparent; }
-        .theme-control:active, .language-control:active, .resume-button:active, a[download]:active { transform: scale(.95); }
-        .apple-glass { box-shadow: 0 10px 32px rgba(0,0,0,.035), inset 0 1px 0 rgba(255,255,255,.08); transform: translate3d(0,var(--hover-y,0px),0); transition: opacity .65s ease, transform .5s cubic-bezier(.22,.8,.3,1.1), box-shadow .4s ease, border-color .35s ease, background-color .45s ease; }
-        .apple-glass.reveal { transform: translate3d(0,calc(var(--reveal-y,0px) + var(--hover-y,0px)),0); }
-        .reveal.motion-pending { opacity: 0; --reveal-y: 18px; }
-        .reveal.motion-pending.is-visible { opacity: 1; --reveal-y: 0px; }
-        .gallery-tile { transition: transform .5s cubic-bezier(.22,.8,.3,1.1), box-shadow .4s ease; }
-        .gallery-tile img { transition: transform .7s cubic-bezier(.22,1,.36,1); }
-        #about .tool-chip { background: var(--border); border-color: transparent; }
-        @media (hover: hover) and (pointer: fine) {
-            .apple-glass:hover { --hover-y: -4px; box-shadow: 0 16px 42px rgba(0,0,0,.1), inset 0 1px 0 rgba(255,255,255,.14); border-color: color-mix(in srgb, var(--accent) 25%, var(--border)); }
-            .gallery-tile:hover { transform: translate3d(0,-4px,0); box-shadow: 0 18px 40px rgba(0,0,0,.18); }
-            .gallery-tile:hover img { transform: scale(1.035); }
-            a[download]:hover { box-shadow: 0 6px 18px rgba(0,0,0,.12); }
-        }
-        @media (max-width: 480px) {
-            .site-header { padding: 10px 10px 0; }
-            .site-nav { padding: 10px 12px; border-radius: 22px; }
-            .site-nav > div:last-child { gap: 8px; }
-            .site-nav > div:first-child > span:first-child { font-size: 1.1rem; }
-            .language-control { padding: 9px 10px; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .ambient-orb { animation: none; }
-            .reveal.motion-pending { opacity: 1; --reveal-y: 0px; }
-            .apple-glass:hover { --hover-y: 0px; }
-            .gallery-tile:hover, .gallery-tile:hover img, button:active, a[download]:active { transform: none; }
-        }
-        .auto-preferences-control { padding: 9px 16px; border: 1px solid var(--border); border-radius: 999px; background: var(--card-bg); color: var(--text-sub); letter-spacing: .03em; }
-        .auto-preferences-control:active { transform: scale(.96); }
-    </style>
+</script>
+  <link rel="stylesheet" href="assets/site.css"><script src="assets/site.js" defer></script>
 </head>
-<body class="antialiased">
-
-    <div class="page-backdrop fixed inset-0 pointer-events-none opacity-20" style="background-image: radial-gradient(var(--accent) 0.5px, transparent 0.5px); background-size: 30px 30px;"></div>
-
-    <div class="ambient-orb ambient-one" aria-hidden="true"></div>
-    <div class="ambient-orb ambient-two" aria-hidden="true"></div>
-
-    <header class="site-header fixed top-0 w-full z-50 bg-opacity-70 backdrop-blur-xl border-b border-white/5 transition-all">
-        <nav class="site-nav max-w-6xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="text-xl font-bold tracking-tight">Qi Wang</span>
-                <span class="hidden md:inline font-mono text-[10px] opacity-40 uppercase tracking-widest">Engineering &amp; Visual Work</span>
-            </div>
-            
-            <div class="flex items-center gap-3 sm:gap-6 text-[12px] font-bold uppercase tracking-widest">
-                <button id="theme-btn" onclick="toggleTheme()" aria-label="Switch to light theme" class="theme-control">
-                    <svg class="theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-                    <svg class="theme-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.7 13.1A8.5 8.5 0 0 1 10.9 3.3 8.5 8.5 0 1 0 20.7 13.1Z"/></svg>
-                </button>
-                <button id="language-btn" onclick="toggleLang()" aria-label="切换到中文" class="language-control transition-all">
-                    <span class="lang-en">ZH / 中</span><span class="lang-zh">EN / 英</span>
-                </button>
-                <a id="resume-btn" href="Resume_EN.pdf" download class="resume-button px-4 sm:px-6 py-2 rounded-full font-bold transition-all hover:opacity-80 active:scale-95 shadow-sm">
-                    <span class="lang-en">RESUME</span><span class="lang-zh">个人简历</span>
-                </a>
-            </div>
-        </nav>
-    </header>
-
-    <main class="max-w-6xl mx-auto px-6 pt-32">
-        
-        <section class="py-16 md:py-28 reveal">
-            <div class="mb-10 font-mono text-[11px] tracking-[0.2em] uppercase flex items-center gap-4">
-                <span class="inline-block w-2 h-2 rounded-full bg-[#00d4ff] shadow-[0_0_8px_#00d4ff] animate-pulse"></span>
-                <span class="lang-en">Engineering Postgraduate</span><span class="lang-zh">工程硕士在读</span>
-                <span class="hidden md:inline opacity-30">//</span>
-                <span class="hidden md:inline">Sydney, Australia</span>
-            </div>
-
-            <h1 class="text-hero text-5xl md:text-7xl mb-12">
-                <span class="lang-en">Engineering Practice.<br><span style="color: var(--label)">Visual Exploration.</span></span>
-                <span class="lang-zh">工程实践。<br><span style="color: var(--label)">视觉探索。</span></span>
-            </h1>
-            <p class="text-xl md:text-2xl max-w-2xl leading-relaxed font-medium" style="color: var(--text-sub)">
-                <span class="lang-en">Master of Engineering student at the University of Sydney, specialising in Computational Engineering. Project experience in SolidWorks modeling and mechanical simulation.</span>
-                <span class="lang-zh">悉尼大学工程硕士在读，专业方向为 Computational Engineering。具有 SolidWorks 建模、机构运动分析及机械仿真项目经验。</span>
-            </p>
-        </section>
-
-        <section id="about" class="py-20 border-t border-current border-opacity-10">
-            <div class="mb-8 reveal">
-                <h2 class="section-label"><span class="lang-en">/ 01. Background</span><span class="lang-zh">/ 01. 个人背景</span></h2>
-                <div class="mt-5 max-w-4xl"><p class="text-xl md:text-2xl font-semibold leading-relaxed">
-                    <span class="lang-en">My engineering background combines mechanical modeling, motion studies and simulation, with internship experience in product modeling, test-data organization and R&amp;D support.</span>
-                    <span class="lang-zh">我的工程经历涵盖机械建模、机构运动分析及仿真，实习中参与过产品建模、测试数据整理与研发支持。</span>
-                </p></div>
-            </div>
-            <div class="space-y-6">
-                <div class="grid sm:grid-cols-2 gap-5">
-                    <div class="apple-glass rounded-3xl p-6 reveal">
-                        <p class="project-meta mb-3"><span class="lang-en">Aug 2026 – Present</span><span class="lang-zh">2026.08 – 至今</span></p>
-                        <h3 class="text-xl font-bold mb-3"><span class="lang-en">The University of Sydney</span><span class="lang-zh">悉尼大学</span></h3>
-                        <p class="font-semibold">Master of Engineering</p>
-                        <p class="mt-2" style="color: var(--text-sub)">Computational Engineering</p>
-                        <p class="project-meta mt-4"><span class="lang-en">Expected completion: Jan 2028</span><span class="lang-zh">预计 2028.01 完成</span></p>
-                    </div>
-                    <div class="apple-glass rounded-3xl p-6 reveal">
-                        <p class="project-meta mb-3"><span class="lang-en">Sep 2021 – Jun 2025</span><span class="lang-zh">2021.09 – 2025.06</span></p>
-                        <h3 class="text-xl font-bold mb-3"><span class="lang-en">Southwest Jiaotong University</span><span class="lang-zh">西南交通大学</span></h3>
-                        <p class="font-semibold"><span class="lang-en">Bachelor of Engineering</span><span class="lang-zh">工学学士</span></p>
-                        <p class="mt-2" style="color: var(--text-sub)"><span class="lang-en">Transportation Equipment and Control Engineering</span><span class="lang-zh">交通设备与控制工程</span></p>
-                        <p class="project-meta mt-4"><span class="lang-en">Average: 83.84/100</span><span class="lang-zh">平均分：83.84/100</span></p>
-                    </div>
-                </div>
-                <div class="grid lg:grid-cols-2 gap-6 items-start">
-                    <div class="apple-glass rounded-3xl p-6 sm:p-8 reveal space-y-5">
-                        <div>
-                    <h3 class="text-lg font-bold mb-3"><span class="lang-en">Tools &amp; Languages</span><span class="lang-zh">工具与语言</span></h3>
-                    <div><span class="tool-chip">SolidWorks / Motion</span><span class="tool-chip">MATLAB / Simulink</span><span class="tool-chip">CarSim</span><span class="tool-chip">ADAMS</span><span class="tool-chip">Excel</span><span class="tool-chip">Photoshop</span></div>
-                    <p class="mt-2 leading-relaxed" style="color: var(--text-sub)"><span class="lang-en">Project experience in SolidWorks parts, assemblies and Motion studies; project use of MATLAB/Simulink, CarSim and ADAMS. Mandarin (native), English (CET-4).</span><span class="lang-zh">SolidWorks 零件、装配及 Motion 运动分析项目实践；MATLAB/Simulink、CarSim、ADAMS 项目使用经验。中文（母语），英语（CET-4）。</span></p>
-                </div>
-                        <p class="leading-relaxed" style="color: var(--text-sub)"><span class="lang-en">Outside engineering, I explore natural landscapes, urban photography and AI-assisted visual creation.</span><span class="lang-zh">工程之外，我也记录自然与城市光影，并进行 AI 辅助视觉创作。</span></p>
-                        <div class="flex flex-wrap gap-3">
-                    <a href="Resume_CN.pdf" download class="apple-glass rounded-full px-5 py-3 font-semibold"><span class="lang-en">Chinese Resume ↓</span><span class="lang-zh">下载中文简历 ↓</span></a>
-                    <a href="Resume_EN.pdf" download class="apple-glass rounded-full px-5 py-3 font-semibold"><span class="lang-en">English Resume ↓</span><span class="lang-zh">下载英文简历 ↓</span></a>
-                </div>
-                    </div>
-                    <div class="apple-glass rounded-3xl p-6 sm:p-8 reveal">
-                        <div>
-                    <h3 class="text-lg font-bold mb-5"><span class="lang-en">Internship Experience</span><span class="lang-zh">实习经历</span></h3>
-                    <div class="space-y-5 leading-relaxed" style="color: var(--text-sub)">
-                        <div><p class="project-meta"><span class="lang-en">Jul – Aug 2023 · Research Assistant Intern</span><span class="lang-zh">2023.07 – 2023.08 · 研究助理实习生</span></p><p class="font-semibold mt-1"><span class="lang-en">Wuhu Ruiji Intelligent Manufacturing Co., Ltd.</span><span class="lang-zh">芜湖瑞集智能制造有限公司</span></p><p class="mt-2"><span class="lang-en">Assisted with competitor research, product-test data and reports; supported component drafting and suspension torsion-bar design discussions.</span><span class="lang-zh">协助竞品调研、产品测试数据整理与报告编制，参与部件图纸绘制及悬挂扭杆改进讨论。</span></p></div>
-                        <div><p class="project-meta"><span class="lang-en">Jul – Aug 2022 · Product R&amp;D Intern</span><span class="lang-zh">2022.07 – 2022.08 · 产品研发实习生</span></p><p class="font-semibold mt-1"><span class="lang-en">Sichuan Yu Suan Ni Technology Co., Ltd.</span><span class="lang-zh">四川玉狻猊科技有限公司</span></p><p class="mt-2"><span class="lang-en">Used SolidWorks for component modeling and revisions from 2D drawings and existing CAD files; prepared Photoshop textures for presentation.</span><span class="lang-zh">依据二维图纸与已有 CAD 文件，使用 SolidWorks 进行部件建模和修改，并使用 Photoshop 制作展示贴图。</span></p></div>
-                    </div>
-                </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="engineering" class="py-20 border-t border-current border-opacity-10">
-            <div class="mb-10 reveal">
-                <h2 class="section-label mb-4"><span class="lang-en">/ 02. Engineering Projects</span><span class="lang-zh">/ 02. 工程项目</span></h2>
-                <p style="color: var(--text-sub)"><span class="lang-en">Selected academic projects in mechanical design, dynamics and control.</span><span class="lang-zh">机械设计、动力学与控制方向的本科项目实践。</span></p>
-            </div>
-            <div class="grid md:grid-cols-2 gap-6">
-                <article class="apple-glass rounded-[2rem] p-6 sm:p-8 reveal">
-                    <p class="project-meta mb-3"><span class="lang-en">Dec 2024 – May 2025 · Bachelor’s thesis</span><span class="lang-zh">2024.12 – 2025.05 · 本科毕业设计</span></p>
-                    <h3 class="text-2xl font-bold mb-5 tracking-tight"><span class="lang-en">Semi-Active Suspension Control</span><span class="lang-zh">汽车半主动悬架控制方法研究</span></h3>
-                    <div class="grid grid-cols-2 gap-3 mb-5">
-                        <img src="images/c35139d040d8c48c577d37ccaff4fabe.png" alt="Suspension simulation model from the undergraduate thesis / 毕业设计悬架仿真模型" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
-                        <img src="images/08458e2f4ddfef8fe46de75e12093f77.png" alt="Suspension simulation output / 悬架仿真输出" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
-                    </div>
-                    <p class="font-semibold mb-4">MATLAB/Simulink · CarSim</p>
-                    <ul class="project-points lang-en"><li>Developed quarter-car and half-car suspension models and configured a full-vehicle co-simulation interface.</li><li>Compared passive suspension, PID, Skyhook, fuzzy PID and GA-tuned PID using acceleration RMS and related metrics.</li></ul>
-                    <ul class="project-points lang-zh"><li>建立四分之一车与半车悬架模型，配置 CarSim–Simulink 整车联合仿真接口。</li><li>比较被动悬架、PID、Skyhook、模糊 PID 与遗传算法调参 PID，整理加速度 RMS 等评价指标。</li></ul>
-                </article>
-                <article class="apple-glass rounded-[2rem] p-6 sm:p-8 reveal">
-                    <p class="project-meta mb-3"><span class="lang-en">Sep 2023 – Sep 2024 · Course project</span><span class="lang-zh">2023.09 – 2024.09 · 机械课程设计</span></p>
-                    <h3 class="text-2xl font-bold mb-5 tracking-tight"><span class="lang-en">Steel Plate Turning Mechanism</span><span class="lang-zh">钢板翻转机构综合设计</span></h3>
-                    <div class="grid grid-cols-2 gap-3 mb-5">
-                        <img src="images/cb7791086333d4d69f2aff3d8a59ee66.png" alt="SolidWorks mechanism design / SolidWorks 机构设计" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
-                        <img src="images/73e17f49ad824ee0d5a4c1752d363e1b.png" alt="Mechanical design project output / 机械课程设计输出" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
-                    </div>
-                    <p class="font-semibold mb-4">SolidWorks · Motion</p>
-                    <ul class="project-points lang-en"><li>Compared four mechanism concepts and modeled a dual-arm crank-rocker assembly and its components.</li><li>Analyzed displacement, velocity, acceleration and drive torque; documented motion-study outputs.</li><li>Performed preliminary motor and transmission sizing, mobility analysis and strength calculations.</li></ul>
-                    <ul class="project-points lang-zh"><li>比较四种机构方案，围绕双臂曲柄摇杆机构开展零件与装配建模。</li><li>分析位移、速度、加速度及驱动力矩，整理运动仿真曲线与设计说明。</li><li>开展电机与传动参数选型、自由度分析及初步强度计算。</li></ul>
-                </article>
-                <article class="apple-glass rounded-[2rem] p-6 sm:p-8 md:col-span-2 reveal">
-                    <p class="project-meta mb-3"><span class="lang-en">Apr 2023 – May 2024 · SRTP · Project lead</span><span class="lang-zh">2023.04 – 2024.05 · 大学生科研训练项目（SRTP）· 项目负责人</span></p>
-                    <h3 class="text-2xl font-bold mb-5 tracking-tight"><span class="lang-en">Pantograph Guide-Plate Profile Design &amp; Optimization</span><span class="lang-zh">受电弓线导板渐开曲面结构设计及优化</span></h3>
-                    <p class="font-semibold mb-4">MATLAB · ADAMS · <span class="lang-en">Constrained optimization</span><span class="lang-zh">约束优化</span></p>
-                    <ul class="project-points lang-en"><li>Coordinated tasks and documentation; contributed to MATLAB geometry and force analysis with ADAMS motion comparisons.</li><li>Contributed to constrained profile optimization using a genetic algorithm; examined initial-point and spring-stiffness effects.</li></ul>
-                    <ul class="project-points lang-zh"><li>协调项目分工与资料整理，参与 MATLAB 几何及受力分析，并与 ADAMS 运动仿真结果对照。</li><li>参与线导板轮廓的约束优化与遗传算法求解，比较初始点、弹簧刚度对轮廓的影响。</li></ul>
-                </article>
-            </div>
-        </section>
-
-        <section id="visual" class="py-20 border-t border-current border-opacity-10">
-            <div class="mb-10 reveal">
-                <div class="section-label mb-6"><span class="lang-en">/ 03. Visual Arts</span><span class="lang-zh">/ 03. 视觉艺术</span></div>
-                <h2 class="text-4xl font-bold tracking-tight"><span class="lang-en">Nature & Urban</span><span class="lang-zh">自然与城市</span></h2>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-16 reveal">
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] gallery-tile shadow-xl"><img src="images/mountain.jpg" alt="Mountain landscape / 山地风景" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.035] transition-all duration-[1.5s]"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] gallery-tile shadow-xl"><img src="images/moon.png" alt="Moon photography / 月亮摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] gallery-tile shadow-xl"><img src="images/night.jpg" alt="Night photography / 夜景摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] gallery-tile shadow-xl"><img src="images/c73c93200937771ab11bd38626287762.jpg" alt="Landscape and city photography / 风景与城市摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] gallery-tile shadow-xl"><img src="images/city-night-2.jpg" alt="City at night / 城市夜景" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] gallery-tile shadow-xl"><img src="images/0778d39c7f0697d71ed01503a4294365.jpg" alt="Urban photography / 城市摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
-            </div>
-            <div class="mb-12 reveal">
-                <h2 class="text-4xl font-bold tracking-tight mb-4"><span class="lang-en">AI-Assisted Visual Experiments</span><span class="lang-zh">AI 辅助视觉创作</span></h2>
-                <p class="text-lg font-medium"><span class="lang-en">AI-assisted visual experimentation.</span><span class="lang-zh">基于 AI 辅助的视觉探索。</span></p>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 reveal">
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/Gemini_Generated_Image_j28htxj28htxj28h.png" alt="AI-assisted visual experiment, first work / AI 辅助视觉创作一" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-4 left-4 px-4 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">AI</span></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/2B50F1EEC591BCEDFFB5F82ED69F59B3.png" alt="AI-assisted visual experiment, second work / AI 辅助视觉创作二" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-4 left-4 px-4 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">AI</span></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/470FBA9EFE7E01EB96F8DFB719C62BEA.png" alt="AI-assisted visual experiment, third work / AI 辅助视觉创作三" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-4 left-4 px-4 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">AI</span></div>
-            </div>
-        </section>
-
-        <section id="contact" class="pt-20 pb-20 border-t border-current border-opacity-10 reveal">
-            <h2 class="text-4xl md:text-7xl font-bold tracking-tighter mb-20"><span class="lang-en">Let's talk.</span><span class="lang-zh">期待与您对话。</span></h2>
-            <div class="grid md:grid-cols-2 gap-10 text-xl font-semibold">
-                <div class="space-y-6">
-                    <p class="section-label"><span class="lang-en">Connect</span><span class="lang-zh">联系方式</span></p>
-                    <a href="mailto:2746783219@qq.com" class="block hover:underline underline-offset-[12px] decoration-2">2746783219@qq.com</a>
-                    <a href="https://www.linkedin.com/in/qi-wang-a344a43b4" target="_blank" rel="noopener noreferrer" class="block opacity-80 hover:opacity-100 transition-opacity">LinkedIn</a>
-                </div>
-                <div class="space-y-6">
-                    <p class="section-label"><span class="lang-en">Location</span><span class="lang-zh">所在地</span></p>
-                    <p><span class="lang-en">Sydney, NSW, Australia</span><span class="lang-zh">澳大利亚 · 悉尼</span></p>
-                    <a href="tel:+61432703190" class="block hover:underline"><span class="lang-en">Australia:</span><span class="lang-zh">澳洲：</span> +61 432 703 190</a>
-                    <a href="tel:+8613955300913" class="block hover:underline"><span class="lang-en">China:</span><span class="lang-zh">国内：</span> +86 139 5530 0913</a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="py-12 border-t border-current border-opacity-5 text-center text-[11px] font-bold uppercase tracking-[0.15em]">
-        <div class="mb-6">
-            <button id="auto-preferences-btn" type="button" onclick="resetAutoPreferences()" class="auto-preferences-control" aria-label="Restore automatic language and local-time appearance">
-                <span class="lang-en">Use automatic settings</span><span class="lang-zh">恢复自动设置</span>
-            </button>
-        </div>
-        &copy; 2026 QI WANG // DESIGNED IN SYDNEY.
-    </footer>
-
-    <script>
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        const preferences = window.portfolioPreferences;
-        preferences.start();
-
-        function animateLanguageChange() {
-            const main = document.querySelector('main');
-            if (!reducedMotion.matches && main.animate) {
-                main.animate([{ opacity: .45, transform: 'translateY(4px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 280, easing: 'cubic-bezier(.22,1,.36,1)' });
-            }
-        }
-
-        function toggleTheme() {
-            preferences.setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-        }
-
-        function toggleLang() {
-            preferences.setLanguage(document.documentElement.dataset.lang === 'en' ? 'zh' : 'en');
-            animateLanguageChange();
-        }
-
-        function resetAutoPreferences() {
-            preferences.reset();
-            animateLanguageChange();
-        }
-
-        const header = document.querySelector('.site-header');
-        function updateHeader() { header.classList.toggle('is-scrolled', window.scrollY > 12); }
-        updateHeader();
-        window.addEventListener('scroll', updateHeader, { passive: true });
-
-        if ('IntersectionObserver' in window && !reducedMotion.matches) {
-            const revealItems = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: .06, rootMargin: '0px 0px 60px 0px' });
-            revealItems.forEach(element => {
-                element.classList.add('motion-pending');
-                observer.observe(element);
-            });
-            reducedMotion.addEventListener('change', event => {
-                if (event.matches) {
-                    observer.disconnect();
-                    revealItems.forEach(element => element.classList.add('is-visible'));
-                }
-            });
-        }
-    </script>
-</body>
-</html>
-
-
+<body>
+  <a class="skip-link" href="#main"><span class="lang-en">Skip to content</span><span class="lang-zh">跳转至正文</span></a>
+  <div class="page-backdrop" aria-hidden="true"></div><div class="ambient-orb ambient-one" aria-hidden="true"></div><div class="ambient-orb ambient-two" aria-hidden="true"></div>
+  <header class="site-header"><div class="site-nav">
+    <a class="brand" href="#top" aria-label="Qi Wang — Home" data-label-en="Qi Wang — Home" data-label-zh="王祺 — 首页"><span class="brand-mark" aria-hidden="true">QW</span><span class="brand-name">Qi Wang</span></a>
+    <nav id="section-nav" class="section-nav" aria-label="Sections" data-label-en="Sections" data-label-zh="页面导航">
+      <a href="#engineering"><span class="lang-en">Projects</span><span class="lang-zh">工程项目</span></a><a href="#about"><span class="lang-en">Background</span><span class="lang-zh">个人背景</span></a><a href="#visual"><span class="lang-en">Visuals</span><span class="lang-zh">视觉作品</span></a><a href="#contact"><span class="lang-en">Contact</span><span class="lang-zh">联系</span></a>
+    </nav>
+    <div class="nav-controls">
+      <button id="theme-btn" type="button" class="icon-button" aria-label="Switch to light theme"><svg class=theme-sun width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class=theme-moon width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.7 13.1A8.5 8.5 0 0 1 10.9 3.3 8.5 8.5 0 1 0 20.7 13.1Z"/></svg></button>
+      <button id="language-btn" type="button" class="language-control" aria-label="切换到中文"><span class="lang-en">中</span><span class="lang-zh">EN</span></button>
+      <button type="button" class="icon-button" data-open-settings aria-label="Language & appearance settings" data-label-en="Language & appearance settings" data-label-zh="语言与外观设置"><svg  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="10" cy="18" r="2"/></svg></button>
+      <a id="resume-btn" href="Resume_EN.pdf" class="resume-button" download><span class="lang-en">RESUME</span><span class="lang-zh">简历</span></a>
+      <button id="menu-btn" type="button" class="icon-button menu-control" aria-controls="section-nav" aria-expanded="false" aria-label="Toggle navigation" data-label-en="Toggle navigation" data-label-zh="展开或收起导航"><svg  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div><div class="scroll-track" aria-hidden="true"><span id="scroll-progress"></span></div>
+  </div></header>
+  <main id="main" class="container">
+    <section id="top" class="hero">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><span class="status-dot" aria-hidden="true"></span><span class="lang-en">Engineering Postgraduate · Sydney</span><span class="lang-zh">工程硕士在读 · 悉尼</span></div>
+        <h1><span class="lang-en">Engineering Practice.<br><span class="secondary-line">Visual Exploration.</span></span><span class="lang-zh">工程实践。<br><span class="secondary-line">视觉探索。</span></span></h1>
+        <p class="hero-description"><span class="lang-en">Master of Engineering student at the University of Sydney, specialising in Computational Engineering. Project experience in SolidWorks modeling, motion studies and mechanical simulation.</span><span class="lang-zh">悉尼大学工程硕士在读，专业方向为 Computational Engineering。具有 SolidWorks 建模、机构运动分析及机械仿真项目经验。</span></p>
+        <div class="hero-tags"><span class="chip">SolidWorks / Motion</span><span class="chip">MATLAB / Simulink</span><span class="chip">Computational Engineering</span></div>
+        <div class="hero-actions"><a class="pill-link primary" href="#engineering"><span class="lang-en">Explore engineering projects</span><span class="lang-zh">查看工程项目</span><span aria-hidden="true">↗</span></a><a class="pill-link" href="#contact"><span class="lang-en">Get in touch</span><span class="lang-zh">联系我</span><span aria-hidden="true">↗</span></a></div>
+      </div>
+      <a class="hero-feature reveal" href="#project-turning">
+        <div class="feature-image"><img src="assets/previews/turning-assembly-960.webp" width="681" height="524" alt="SolidWorks steel plate turning mechanism / SolidWorks 钢板翻转机构" fetchpriority="high" decoding="async"></div>
+        <div class="feature-copy"><div class="feature-kicker"><span class="lang-en">From the engineering portfolio</span><span class="lang-zh">工程作品示例</span></div><h2><span class="lang-en">Steel Plate Turning Mechanism</span><span class="lang-zh">钢板翻转机构综合设计</span></h2><div class="feature-bottom"><span>SolidWorks · Motion</span><span class="feature-arrow" aria-hidden="true">↗</span></div></div>
+      </a>
+    </section>
+    <section id="engineering" class="section" data-nav-section>
+      <div class="section-heading reveal"><div><p class="section-label"><span class="lang-en">/ 01. Engineering Projects</span><span class="lang-zh">/ 01. 工程项目</span></p><h2><span class="lang-en">Design. Model. Explore.</span><span class="lang-zh">设计、建模与分析。</span></h2></div><p class="section-intro"><span class="lang-en">Selected academic projects in mechanical design, dynamics and control. Open the images for a closer look.</span><span class="lang-zh">机械设计、动力学与控制方向的本科项目实践。点击图片可查看细节。</span></p></div>
+      <div class="projects-grid"><article id="project-suspension" class="project-card glass-card reveal ">
+      <p class="project-meta"><span class="lang-en">Dec 2024 – May 2025 · Bachelor’s thesis</span><span class="lang-zh">2024.12 – 2025.05 · 本科毕业设计</span></p>
+      <h3><span class="lang-en">Semi-Active Suspension Control</span><span class="lang-zh">汽车半主动悬架控制方法研究</span></h3>
+      <div class="project-images"><figure>
+      <a class="image-link" href="images/c35139d040d8c48c577d37ccaff4fabe.png" target="_blank" rel="noopener noreferrer" data-gallery="suspension" data-caption-en="CarSim simulation view and output signals" data-caption-zh="CarSim 仿真场景与输出信号" data-label-en="Enlarge: CarSim simulation view and output signals" data-label-zh="放大：CarSim 仿真场景与输出信号" aria-label="Enlarge: CarSim simulation view and output signals">
+        <img src="assets/previews/suspension-run-480.webp" srcset="assets/previews/suspension-run-480.webp 480w, assets/previews/suspension-run-960.webp 921w" sizes="(max-width: 700px) 42vw, 240px" width="921" height="491" alt="CarSim simulation view and output signals / CarSim 仿真场景与输出信号" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">CarSim simulation view and output signals</span><span class="lang-zh">CarSim 仿真场景与输出信号</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/08458e2f4ddfef8fe46de75e12093f77.png" target="_blank" rel="noopener noreferrer" data-gallery="suspension" data-caption-en="CarSim–Simulink model interface" data-caption-zh="CarSim–Simulink 模型接口" data-label-en="Enlarge: CarSim–Simulink model interface" data-label-zh="放大：CarSim–Simulink 模型接口" aria-label="Enlarge: CarSim–Simulink model interface">
+        <img src="assets/previews/suspension-interface-480.webp" srcset="assets/previews/suspension-interface-480.webp 480w, assets/previews/suspension-interface-960.webp 879w" sizes="(max-width: 700px) 42vw, 240px" width="879" height="615" alt="CarSim–Simulink model interface / CarSim–Simulink 模型接口" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">CarSim–Simulink model interface</span><span class="lang-zh">CarSim–Simulink 模型接口</span></figcaption>
+    </figure></div><p class="project-tools">MATLAB/Simulink · CarSim</p><ul class="project-points"><li><span class="lang-en">Developed quarter-car and half-car suspension models and configured a CarSim–Simulink full-vehicle co-simulation interface.</span><span class="lang-zh">建立四分之一车与半车悬架模型，配置 CarSim–Simulink 整车联合仿真接口。</span></li><li><span class="lang-en">Compared passive suspension, PID, Skyhook, fuzzy PID and GA-tuned PID using acceleration RMS and related metrics.</span><span class="lang-zh">比较被动悬架、PID、Skyhook、模糊 PID 与遗传算法调参 PID，整理加速度 RMS 等评价指标。</span></li></ul>
+      <details class="case-details"><summary><span class="lang-en">Approach & outputs</span><span class="lang-zh">方法与交付说明</span><span class="details-icon" aria-hidden="true">+</span></summary><dl class="case-body"><div><dt><span class="lang-en">Task</span><span class="lang-zh">任务目标</span></dt><dd><span class="lang-en">Study semi-active suspension control through vehicle models and simulation comparisons.</span><span class="lang-zh">通过车辆模型与仿真对比，研究半主动悬架控制方法。</span></dd></div><div><dt><span class="lang-en">Work carried out</span><span class="lang-zh">工作内容</span></dt><dd><span class="lang-en">Suspension-model setup, co-simulation configuration, controller comparison and organization of evaluation outputs.</span><span class="lang-zh">悬架模型搭建、联合仿真接口配置、控制器对比与评价输出整理。</span></dd></div><div><dt><span class="lang-en">Approach</span><span class="lang-zh">方法</span></dt><dd><span class="lang-en">Compare the listed control approaches using the model outputs, including acceleration RMS.</span><span class="lang-zh">基于模型输出比较上述控制方法，并采用加速度 RMS 等指标进行评价。</span></dd></div><div><dt><span class="lang-en">Outputs & scope</span><span class="lang-zh">交付与范围</span></dt><dd><span class="lang-en">Simulation models, controller comparisons and thesis documentation. The project evidence shown here comes from model-based simulation.</span><span class="lang-zh">仿真模型、控制方法对比及毕业设计文档。此处展示的项目证据来自模型仿真。</span></dd></div></dl></details>
+    </article><article id="project-turning" class="project-card glass-card reveal ">
+      <p class="project-meta"><span class="lang-en">Sep 2023 – Sep 2024 · Course project</span><span class="lang-zh">2023.09 – 2024.09 · 机械课程设计</span></p>
+      <h3><span class="lang-en">Steel Plate Turning Mechanism</span><span class="lang-zh">钢板翻转机构综合设计</span></h3>
+      <div class="project-images"><figure>
+      <a class="image-link" href="images/cb7791086333d4d69f2aff3d8a59ee66.png" target="_blank" rel="noopener noreferrer" data-gallery="turning" data-caption-en="SolidWorks mechanism assembly" data-caption-zh="SolidWorks 机构装配模型" data-label-en="Enlarge: SolidWorks mechanism assembly" data-label-zh="放大：SolidWorks 机构装配模型" aria-label="Enlarge: SolidWorks mechanism assembly">
+        <img src="assets/previews/turning-assembly-480.webp" srcset="assets/previews/turning-assembly-480.webp 480w, assets/previews/turning-assembly-960.webp 681w" sizes="(max-width: 700px) 42vw, 240px" width="681" height="524" alt="SolidWorks mechanism assembly / SolidWorks 机构装配模型" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">SolidWorks mechanism assembly</span><span class="lang-zh">SolidWorks 机构装配模型</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/73e17f49ad824ee0d5a4c1752d363e1b.png" target="_blank" rel="noopener noreferrer" data-gallery="turning" data-caption-en="Motor-shaft analysis from the course project" data-caption-zh="课程设计中的电机轴分析示例" data-label-en="Enlarge: Motor-shaft analysis from the course project" data-label-zh="放大：课程设计中的电机轴分析示例" aria-label="Enlarge: Motor-shaft analysis from the course project">
+        <img src="assets/previews/turning-analysis-480.webp" srcset="assets/previews/turning-analysis-480.webp 480w, assets/previews/turning-analysis-960.webp 807w" sizes="(max-width: 700px) 42vw, 240px" width="807" height="511" alt="Motor-shaft analysis from the course project / 课程设计中的电机轴分析示例" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">Motor-shaft analysis from the course project</span><span class="lang-zh">课程设计中的电机轴分析示例</span></figcaption>
+    </figure></div><p class="project-tools">SolidWorks · Motion</p><ul class="project-points"><li><span class="lang-en">Compared four mechanism concepts and modeled a dual-arm crank-rocker assembly and its components.</span><span class="lang-zh">比较四种机构方案，围绕双臂曲柄摇杆机构开展零件与装配建模。</span></li><li><span class="lang-en">Analyzed displacement, velocity, acceleration and drive torque; documented motion-study outputs.</span><span class="lang-zh">分析位移、速度、加速度及驱动力矩，整理运动仿真曲线与设计说明。</span></li><li><span class="lang-en">Performed preliminary motor and transmission sizing, mobility analysis and strength calculations.</span><span class="lang-zh">开展电机与传动参数选型、自由度分析及初步强度计算。</span></li></ul>
+      <details class="case-details"><summary><span class="lang-en">Approach & outputs</span><span class="lang-zh">方法与交付说明</span><span class="details-icon" aria-hidden="true">+</span></summary><dl class="case-body"><div><dt><span class="lang-en">Task</span><span class="lang-zh">任务目标</span></dt><dd><span class="lang-en">Develop a mechanical concept for turning steel plates, covering mechanism selection, assembly modeling and motion analysis.</span><span class="lang-zh">围绕钢板翻转任务开展机构选型、装配建模及运动分析。</span></dd></div><div><dt><span class="lang-en">Modeling work</span><span class="lang-zh">建模工作</span></dt><dd><span class="lang-en">Part and assembly modeling in SolidWorks for the selected dual-arm crank-rocker concept.</span><span class="lang-zh">使用 SolidWorks 为选定的双臂曲柄摇杆方案开展零件与装配建模。</span></dd></div><div><dt><span class="lang-en">Engineering approach</span><span class="lang-zh">工程方法</span></dt><dd><span class="lang-en">Compare four concepts; examine mobility and motion outputs; perform preliminary drive sizing and strength calculations.</span><span class="lang-zh">比较四种方案，分析机构自由度与运动输出，并开展初步驱动选型及强度计算。</span></dd></div><div><dt><span class="lang-en">Outputs & scope</span><span class="lang-zh">交付与范围</span></dt><dd><span class="lang-en">CAD models, motion-study curves and a mechanical-design report, produced as an academic course project.</span><span class="lang-zh">CAD 模型、运动分析曲线及机械设计说明书，属于课程设计成果。</span></dd></div></dl></details>
+    </article><article id="project-pantograph" class="project-card glass-card reveal wide">
+      <p class="project-meta"><span class="lang-en">Apr 2023 – May 2024 · SRTP · Project lead</span><span class="lang-zh">2023.04 – 2024.05 · 大学生科研训练项目（SRTP）· 项目负责人</span></p>
+      <h3><span class="lang-en">Pantograph Guide-Plate Profile Design & Optimization</span><span class="lang-zh">受电弓线导板渐开曲面结构设计及优化</span></h3>
+      <p class="project-tools">MATLAB · ADAMS · <span class="lang-en">Constrained optimization</span><span class="lang-zh">约束优化</span></p><ul class="project-points"><li><span class="lang-en">Coordinated tasks and documentation; contributed to MATLAB geometry and force analysis with ADAMS motion comparisons.</span><span class="lang-zh">协调项目分工与资料整理，参与 MATLAB 几何及受力分析，并与 ADAMS 运动仿真结果对照。</span></li><li><span class="lang-en">Contributed to constrained profile optimization using a genetic algorithm; examined initial-point and spring-stiffness effects.</span><span class="lang-zh">参与线导板轮廓的约束优化与遗传算法求解，比较初始点、弹簧刚度对轮廓的影响。</span></li></ul>
+      <details class="case-details"><summary><span class="lang-en">Approach & outputs</span><span class="lang-zh">方法与交付说明</span><span class="details-icon" aria-hidden="true">+</span></summary><dl class="case-body"><div><dt><span class="lang-en">Task</span><span class="lang-zh">任务目标</span></dt><dd><span class="lang-en">Explore pantograph guide-plate profiles through geometry, force analysis and constrained optimization.</span><span class="lang-zh">通过几何、受力分析及约束优化，研究受电弓线导板轮廓。</span></dd></div><div><dt><span class="lang-en">Role</span><span class="lang-zh">承担角色</span></dt><dd><span class="lang-en">Project coordination and documentation, with participation in analysis and optimization work.</span><span class="lang-zh">负责项目协调与资料整理，并参与分析及优化工作。</span></dd></div><div><dt><span class="lang-en">Approach</span><span class="lang-zh">方法</span></dt><dd><span class="lang-en">MATLAB geometry and force analysis, ADAMS motion comparisons and genetic-algorithm optimization.</span><span class="lang-zh">MATLAB 几何及受力分析、ADAMS 运动仿真对照与遗传算法优化。</span></dd></div><div><dt><span class="lang-en">Study focus</span><span class="lang-zh">研究重点</span></dt><dd><span class="lang-en">Compare the influence of initial points and spring stiffness on the profile within the academic project.</span><span class="lang-zh">在科研训练项目范围内，比较初始点与弹簧刚度对轮廓的影响。</span></dd></div></dl></details>
+    </article></div>
+    </section>
+    <section id="about" class="section" data-nav-section>
+      <div class="section-heading reveal"><div><p class="section-label"><span class="lang-en">/ 02. Background</span><span class="lang-zh">/ 02. 个人背景</span></p><h2><span class="lang-en">An engineering foundation.</span><span class="lang-zh">工程背景与实践。</span></h2></div></div>
+      <p class="background-lead reveal"><span class="lang-en">My engineering background combines mechanical modeling, motion studies and simulation, with internship experience in product modeling, test-data organization and R&amp;D support.</span><span class="lang-zh">我的工程经历涵盖机械建模、机构运动分析及仿真，实习中参与过产品建模、测试数据整理与研发支持。</span></p>
+      <div class="education-grid">
+        <div class="glass-card education-card reveal"><p class="project-meta"><span class="lang-en">Aug 2026 – Present</span><span class="lang-zh">2026.08 – 至今</span></p><h3><span class="lang-en">The University of Sydney</span><span class="lang-zh">悉尼大学</span></h3><p class="degree">Master of Engineering</p><p class="specialism">Computational Engineering</p><p class="completion"><span class="lang-en">Expected completion: Jan 2028</span><span class="lang-zh">预计 2028.01 完成</span></p></div>
+        <div class="glass-card education-card reveal"><p class="project-meta"><span class="lang-en">Sep 2021 – Jun 2025</span><span class="lang-zh">2021.09 – 2025.06</span></p><h3><span class="lang-en">Southwest Jiaotong University</span><span class="lang-zh">西南交通大学</span></h3><p class="degree"><span class="lang-en">Bachelor of Engineering</span><span class="lang-zh">工学学士</span></p><p class="specialism"><span class="lang-en">Transportation Equipment and Control Engineering</span><span class="lang-zh">交通设备与控制工程</span></p><p class="completion"><span class="lang-en">Average: 83.84/100</span><span class="lang-zh">平均分：83.84/100</span></p></div>
+      </div>
+      <div class="background-grid">
+        <div class="glass-card background-card reveal"><h3><span class="lang-en">Tools & languages</span><span class="lang-zh">工具与语言</span></h3><div class="tools-wrap"><span class="chip">SolidWorks / Motion</span><span class="chip">MATLAB / Simulink</span><span class="chip">CarSim</span><span class="chip">ADAMS</span><span class="chip">Excel</span><span class="chip">Photoshop</span></div><p class="body-copy"><span class="lang-en">Project experience in SolidWorks parts, assemblies and Motion studies; project use of MATLAB/Simulink, CarSim and ADAMS. Mandarin (native), English (CET-4).</span><span class="lang-zh">SolidWorks 零件、装配及 Motion 运动分析项目实践；MATLAB/Simulink、CarSim、ADAMS 项目使用经验。中文（母语），英语（CET-4）。</span></p><p class="body-copy"><span class="lang-en">Outside engineering, I explore natural landscapes, urban photography and AI-assisted visual creation.</span><span class="lang-zh">工程之外，我也记录自然与城市光影，并进行 AI 辅助视觉创作。</span></p><div class="resume-links"><a class="pill-link" href="Resume_CN.pdf" download><span class="lang-en">Chinese resume ↓</span><span class="lang-zh">中文简历 ↓</span></a><a class="pill-link" href="Resume_EN.pdf" download><span class="lang-en">English resume ↓</span><span class="lang-zh">英文简历 ↓</span></a></div></div>
+        <div class="glass-card background-card reveal"><h3><span class="lang-en">Internship experience</span><span class="lang-zh">实习经历</span></h3><div class="internship"><p class="role"><span class="lang-en">Jul – Aug 2023 · Research Assistant Intern</span><span class="lang-zh">2023.07 – 2023.08 · 研究助理实习生</span></p><h4><span class="lang-en">Wuhu Ruiji Intelligent Manufacturing Co., Ltd.</span><span class="lang-zh">芜湖瑞集智能制造有限公司</span></h4><p class="body-copy"><span class="lang-en">Assisted with competitor research, product-test data and reports; supported component drafting and suspension torsion-bar design discussions.</span><span class="lang-zh">协助竞品调研、产品测试数据整理与报告编制，参与部件图纸绘制及悬挂扭杆改进讨论。</span></p></div><div class="internship"><p class="role"><span class="lang-en">Jul – Aug 2022 · Product R&amp;D Intern</span><span class="lang-zh">2022.07 – 2022.08 · 产品研发实习生</span></p><h4><span class="lang-en">Sichuan Yu Suan Ni Technology Co., Ltd.</span><span class="lang-zh">四川玉狻猊科技有限公司</span></h4><p class="body-copy"><span class="lang-en">Used SolidWorks for component modeling and revisions from 2D drawings and existing CAD files; prepared Photoshop textures for presentation.</span><span class="lang-zh">依据二维图纸与已有 CAD 文件，使用 SolidWorks 进行部件建模和修改，并使用 Photoshop 制作展示贴图。</span></p></div></div>
+      </div>
+    </section>
+    <section id="visual" class="section" data-nav-section><div class="section-heading reveal"><div><p class="section-label"><span class="lang-en">/ 03. Visual Work</span><span class="lang-zh">/ 03. 视觉作品</span></p><h2><span class="lang-en">Nature & urban.</span><span class="lang-zh">自然与城市。</span></h2></div><p class="section-intro"><span class="lang-en">A personal collection of landscapes, moon studies and moments in the city.</span><span class="lang-zh">记录山地、月亮与城市光影的个人摄影作品。</span></p></div><div class="gallery-grid reveal"><figure>
+      <a class="image-link" href="images/mountain.jpg" target="_blank" rel="noopener noreferrer" data-gallery="photography" data-caption-en="Mountain landscape" data-caption-zh="山地风景" data-label-en="Enlarge: Mountain landscape" data-label-zh="放大：山地风景" aria-label="Enlarge: Mountain landscape">
+        <img src="assets/previews/mountain-480.webp" srcset="assets/previews/mountain-480.webp 480w, assets/previews/mountain-960.webp 960w" sizes="(max-width: 700px) 42vw, 350px" width="960" height="540" alt="Mountain landscape / 山地风景" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">Mountain landscape</span><span class="lang-zh">山地风景</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/moon.png" target="_blank" rel="noopener noreferrer" data-gallery="photography" data-caption-en="Moon study" data-caption-zh="月亮摄影" data-label-en="Enlarge: Moon study" data-label-zh="放大：月亮摄影" aria-label="Enlarge: Moon study">
+        <img src="assets/previews/moon-480.webp" srcset="assets/previews/moon-480.webp 480w, assets/previews/moon-960.webp 960w" sizes="(max-width: 700px) 42vw, 350px" width="960" height="540" alt="Moon study / 月亮摄影" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">Moon study</span><span class="lang-zh">月亮摄影</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/night.jpg" target="_blank" rel="noopener noreferrer" data-gallery="photography" data-caption-en="Night photography" data-caption-zh="夜景摄影" data-label-en="Enlarge: Night photography" data-label-zh="放大：夜景摄影" aria-label="Enlarge: Night photography">
+        <img src="assets/previews/night-480.webp" srcset="assets/previews/night-480.webp 320w, assets/previews/night-960.webp 640w" sizes="(max-width: 700px) 42vw, 350px" width="640" height="960" alt="Night photography / 夜景摄影" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">Night photography</span><span class="lang-zh">夜景摄影</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/c73c93200937771ab11bd38626287762.jpg" target="_blank" rel="noopener noreferrer" data-gallery="photography" data-caption-en="Landscape &amp; city" data-caption-zh="风景与城市" data-label-en="Enlarge: Landscape &amp; city" data-label-zh="放大：风景与城市" aria-label="Enlarge: Landscape &amp; city">
+        <img src="assets/previews/landscape-city-480.webp" srcset="assets/previews/landscape-city-480.webp 480w, assets/previews/landscape-city-960.webp 960w" sizes="(max-width: 700px) 42vw, 350px" width="960" height="540" alt="Landscape &amp; city / 风景与城市" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">Landscape & city</span><span class="lang-zh">风景与城市</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/city-night-2.jpg" target="_blank" rel="noopener noreferrer" data-gallery="photography" data-caption-en="City after dark" data-caption-zh="城市夜景" data-label-en="Enlarge: City after dark" data-label-zh="放大：城市夜景" aria-label="Enlarge: City after dark">
+        <img src="assets/previews/city-night-480.webp" srcset="assets/previews/city-night-480.webp 320w, assets/previews/city-night-960.webp 640w" sizes="(max-width: 700px) 42vw, 350px" width="640" height="960" alt="City after dark / 城市夜景" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">City after dark</span><span class="lang-zh">城市夜景</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/0778d39c7f0697d71ed01503a4294365.jpg" target="_blank" rel="noopener noreferrer" data-gallery="photography" data-caption-en="Urban photography" data-caption-zh="城市摄影" data-label-en="Enlarge: Urban photography" data-label-zh="放大：城市摄影" aria-label="Enlarge: Urban photography">
+        <img src="assets/previews/urban-480.webp" srcset="assets/previews/urban-480.webp 320w, assets/previews/urban-960.webp 640w" sizes="(max-width: 700px) 42vw, 350px" width="640" height="960" alt="Urban photography / 城市摄影" loading="lazy" decoding="async">
+        <span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">Urban photography</span><span class="lang-zh">城市摄影</span></figcaption>
+    </figure></div><h3 class="gallery-label reveal"><span class="lang-en">AI-assisted visual experiments</span><span class="lang-zh">AI 辅助视觉创作</span></h3><p class="gallery-description reveal"><span class="lang-en">Visual experiments made with AI assistance.</span><span class="lang-zh">基于 AI 辅助的视觉探索。</span></p><div class="gallery-grid reveal"><figure>
+      <a class="image-link" href="images/Gemini_Generated_Image_j28htxj28htxj28h.png" target="_blank" rel="noopener noreferrer" data-gallery="ai" data-caption-en="AI-assisted visual experiment 01" data-caption-zh="AI 辅助视觉创作 01" data-label-en="Enlarge: AI-assisted visual experiment 01" data-label-zh="放大：AI 辅助视觉创作 01" aria-label="Enlarge: AI-assisted visual experiment 01">
+        <img src="assets/previews/ai-one-480.webp" srcset="assets/previews/ai-one-480.webp 358w, assets/previews/ai-one-960.webp 717w" sizes="(max-width: 700px) 42vw, 350px" width="717" height="960" alt="AI-assisted visual experiment 01 / AI 辅助视觉创作 01" loading="lazy" decoding="async">
+        <span class="ai-marker">AI</span><span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">AI-assisted visual experiment 01</span><span class="lang-zh">AI 辅助视觉创作 01</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/2B50F1EEC591BCEDFFB5F82ED69F59B3.png" target="_blank" rel="noopener noreferrer" data-gallery="ai" data-caption-en="AI-assisted visual experiment 02" data-caption-zh="AI 辅助视觉创作 02" data-label-en="Enlarge: AI-assisted visual experiment 02" data-label-zh="放大：AI 辅助视觉创作 02" aria-label="Enlarge: AI-assisted visual experiment 02">
+        <img src="assets/previews/ai-two-480.webp" srcset="assets/previews/ai-two-480.webp 480w, assets/previews/ai-two-960.webp 960w" sizes="(max-width: 700px) 42vw, 350px" width="960" height="524" alt="AI-assisted visual experiment 02 / AI 辅助视觉创作 02" loading="lazy" decoding="async">
+        <span class="ai-marker">AI</span><span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">AI-assisted visual experiment 02</span><span class="lang-zh">AI 辅助视觉创作 02</span></figcaption>
+    </figure><figure>
+      <a class="image-link" href="images/470FBA9EFE7E01EB96F8DFB719C62BEA.png" target="_blank" rel="noopener noreferrer" data-gallery="ai" data-caption-en="AI-assisted visual experiment 03" data-caption-zh="AI 辅助视觉创作 03" data-label-en="Enlarge: AI-assisted visual experiment 03" data-label-zh="放大：AI 辅助视觉创作 03" aria-label="Enlarge: AI-assisted visual experiment 03">
+        <img src="assets/previews/ai-three-480.webp" srcset="assets/previews/ai-three-480.webp 480w, assets/previews/ai-three-960.webp 960w" sizes="(max-width: 700px) 42vw, 350px" width="960" height="536" alt="AI-assisted visual experiment 03 / AI 辅助视觉创作 03" loading="lazy" decoding="async">
+        <span class="ai-marker">AI</span><span class="image-expand" aria-hidden="true">↗</span>
+      </a><figcaption><span class="lang-en">AI-assisted visual experiment 03</span><span class="lang-zh">AI 辅助视觉创作 03</span></figcaption>
+    </figure></div></section>
+    <section id="contact" class="section reveal" data-nav-section><h2 class="contact-heading"><span class="lang-en">Let’s talk.</span><span class="lang-zh">期待与您对话。</span></h2><div class="contact-grid"><div><p class="contact-label"><span class="lang-en">Connect</span><span class="lang-zh">联系方式</span></p><div class="contact-row"><a href="mailto:2746783219@qq.com">2746783219@qq.com</a><button id="copy-email" class="copy-control" type="button" aria-label="Copy email address" data-label-en="Copy email address" data-label-zh="复制邮箱地址"><svg  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg></button></div><a class="contact-link" href="https://www.linkedin.com/in/qi-wang-a344a43b4" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><span id="copy-feedback" class="copy-feedback" role="status" aria-live="polite"></span></div><div><p class="contact-label"><span class="lang-en">Location</span><span class="lang-zh">所在地</span></p><p class="location"><span class="lang-en">Sydney, NSW, Australia</span><span class="lang-zh">澳大利亚 · 悉尼</span></p><a class="contact-link" href="tel:+61432703190"><span class="lang-en">Australia:</span><span class="lang-zh">澳洲：</span> +61 432 703 190</a><a class="contact-link" href="tel:+8613955300913"><span class="lang-en">China:</span><span class="lang-zh">国内：</span> +86 139 5530 0913</a></div></div></section>
+  </main>
+  <footer class="footer"><div class="container footer-inner"><p class="footer-copy">© 2026 QI WANG · DESIGNED IN SYDNEY</p><button type="button" class="footer-settings" data-open-settings><span class="lang-en">Language & appearance</span><span class="lang-zh">语言与外观设置</span></button></div></footer>
+  <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title"><div class="dialog-header"><h2 id="settings-title"><span class="lang-en">Make yourself at home.</span><span class="lang-zh">语言与外观设置</span></h2><button type="button" class="dialog-close" data-close aria-label="Close settings" data-label-en="Close settings" data-label-zh="关闭设置"><svg  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div><div class="settings-content">
+    <div class="setting-group"><div class="setting-heading"><label for="language-setting"><span class="lang-en">Language</span><span class="lang-zh">语言</span></label><button id="reset-language" class="setting-reset" type="button"><span class="lang-en">Restore automatic</span><span class="lang-zh">恢复自动</span></button></div><select id="language-setting" class="setting-select"><option value="timezone" data-text-en="Automatic · time zone" data-text-zh="自动 · 按时区">Automatic · time zone</option><option value="browser" data-text-en="Automatic · browser language" data-text-zh="自动 · 浏览器语言">Automatic · browser language</option><option value="zh" data-text-en="中文" data-text-zh="中文">中文</option><option value="en" data-text-en="English" data-text-zh="English">English</option></select><p class="setting-hint"><span class="lang-en">Time zone defaults to Chinese for mainland China, Hong Kong, Macao and Taiwan; English elsewhere. You can also follow your browser’s preferred language.</span><span class="lang-zh">按时区模式：中国大陆、港澳台时区默认中文，其他时区默认英文；也可跟随浏览器首选语言。</span></p></div>
+    <div class="setting-group"><div class="setting-heading"><label for="theme-setting"><span class="lang-en">Appearance</span><span class="lang-zh">外观</span></label><button id="reset-theme" class="setting-reset" type="button"><span class="lang-en">Restore automatic</span><span class="lang-zh">恢复自动</span></button></div><select id="theme-setting" class="setting-select"><option value="time" data-text-en="Automatic · local time" data-text-zh="自动 · 当地时间">Automatic · local time</option><option value="system" data-text-en="Follow device appearance" data-text-zh="跟随系统">Follow device appearance</option><option value="light" data-text-en="Light" data-text-zh="明亮">Light</option><option value="dark" data-text-en="Dark" data-text-zh="暗色">Dark</option></select><p class="setting-hint"><span class="lang-en">Local time uses light appearance from 07:00 to 19:00 and dark appearance otherwise. Manual choices are remembered in this browser.</span><span class="lang-zh">当地时间模式：07:00–19:00 使用明亮外观，其余时间使用暗色。手动选择会保存在当前浏览器。</span></p></div>
+    <p id="preference-status" class="preference-status" role="status" aria-live="polite"></p><button id="reset-all" type="button" class="reset-all"><span class="lang-en">Restore all automatic settings</span><span class="lang-zh">全部恢复自动设置</span></button>
+  </div></dialog>
+  <dialog id="lightbox-dialog" class="lightbox-dialog" aria-labelledby="lightbox-title"><div class="dialog-header"><h2 id="lightbox-title" class="lightbox-title"></h2><button type="button" class="dialog-close" data-close aria-label="Close image viewer" data-label-en="Close image viewer" data-label-zh="关闭图片查看器"><svg  width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div><div id="lightbox-stage" class="lightbox-stage"><button id="lightbox-prev" type="button" class="lightbox-nav previous" aria-label="Previous image" data-label-en="Previous image" data-label-zh="上一张图片">‹</button><img id="lightbox-image" alt="" decoding="async"><button id="lightbox-next" type="button" class="lightbox-nav next" aria-label="Next image" data-label-en="Next image" data-label-zh="下一张图片">›</button></div><div class="lightbox-footer"><span id="lightbox-counter" aria-live="polite"></span><span><span class="lang-en">← → Browse · Esc Close</span><span class="lang-zh">← → 切换 · Esc 关闭</span></span><a id="lightbox-original" class="original-link" target="_blank" rel="noopener noreferrer"><span class="lang-en">Open original ↗</span><span class="lang-zh">查看原图 ↗</span></a></div></dialog>
+</body></html>
