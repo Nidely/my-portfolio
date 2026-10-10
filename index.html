@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qi Wang | Portfolio</title>
+    <title>Qi Wang 王祺 | Engineering &amp; Visual Portfolio</title>
+    <meta name="description" content="Qi Wang, Master of Engineering student at the University of Sydney. SolidWorks modeling, mechanical design and simulation projects; photography and AI-assisted visual experiments.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
+        if (window.tailwind) tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
@@ -32,7 +33,7 @@
             --bg: #000000;
             --text-main: #f5f5f7;
             --text-sub: #d2d2d7;
-            --label: #86868b;
+            --label: #a1a1a6;
             --card-bg: rgba(28, 28, 30, 0.7);
             --border: rgba(255, 255, 255, 0.1);
             --accent: #00d4ff;
@@ -51,8 +52,8 @@
         body[data-lang="zh"] .lang-en { display: none; }
 
         .reveal {
-            opacity: 0;
-            transform: translateY(30px);
+            opacity: 1;
+            transform: none;
             transition: all 0.8s cubic-bezier(0.15, 0, 0.15, 1);
         }
         .reveal.active { opacity: 1; transform: translateY(0); }
@@ -78,6 +79,18 @@
             letter-spacing: 0.15em;
             text-transform: uppercase;
         }
+        header { background: var(--card-bg); border-color: var(--border); }
+        .resume-button { background: var(--text-main); color: var(--bg); }
+        button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+        .project-meta { color: var(--label); font-size: .85rem; line-height: 1.7; }
+        .project-points { color: var(--text-sub); line-height: 1.8; padding-left: 1.2rem; list-style: disc; }
+        .project-points li + li { margin-top: .55rem; }
+        .tool-chip { display: inline-block; padding: .35rem .75rem; margin: 0 .3rem .45rem 0; border: 1px solid var(--border); border-radius: 999px; font-size: .85rem; }
+        section[id] { scroll-margin-top: 6rem; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after { transition: none !important; animation: none !important; }
+        }
     </style>
 </head>
 <body class="antialiased" data-lang="en" data-theme="dark">
@@ -88,15 +101,15 @@
         <nav class="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <span class="text-xl font-bold tracking-tight">Qi Wang</span>
-                <span class="hidden md:inline font-mono text-[10px] opacity-40 uppercase tracking-widest">USYD // v.5.9</span>
+                <span class="hidden md:inline font-mono text-[10px] opacity-40 uppercase tracking-widest">Engineering &amp; Visual Work</span>
             </div>
             
-            <div class="flex items-center gap-6 text-[12px] font-bold uppercase tracking-widest">
-                <button onclick="toggleTheme()" class="text-lg hover:scale-110 transition-transform">🌓</button>
-                <button onclick="toggleLang()" class="border-b border-current hover:opacity-50 transition-all px-1">
+            <div class="flex items-center gap-3 sm:gap-6 text-[12px] font-bold uppercase tracking-widest">
+                <button id="theme-btn" onclick="toggleTheme()" aria-label="Switch to light theme" class="text-lg hover:scale-110 transition-transform">🌓</button>
+                <button id="language-btn" onclick="toggleLang()" aria-label="切换到中文" class="border-b border-current hover:opacity-50 transition-all px-1">
                     <span class="lang-en">ZH / 中</span><span class="lang-zh">EN / 英</span>
                 </button>
-                <a id="resume-btn" href="Resume_EN.pdf" download class="px-6 py-2 bg-[#1d1d1f] dark:bg-[#f5f5f7] text-white dark:text-black rounded-full font-bold transition-all hover:opacity-80 active:scale-95 shadow-sm">
+                <a id="resume-btn" href="Resume_EN.pdf" download class="resume-button px-4 sm:px-6 py-2 rounded-full font-bold transition-all hover:opacity-80 active:scale-95 shadow-sm">
                     <span class="lang-en">RESUME</span><span class="lang-zh">个人简历</span>
                 </a>
             </div>
@@ -105,143 +118,170 @@
 
     <main class="max-w-6xl mx-auto px-6 pt-32">
         
-        <section class="py-32 md:py-48 reveal">
-            <div class="mb-10 font-mono text-[11px] tracking-[0.6em] opacity-40 uppercase flex items-center gap-4">
+        <section class="py-16 md:py-28 reveal">
+            <div class="mb-10 font-mono text-[11px] tracking-[0.2em] uppercase flex items-center gap-4">
                 <span class="inline-block w-2 h-2 rounded-full bg-[#00d4ff] shadow-[0_0_8px_#00d4ff] animate-pulse"></span>
-                <span class="lang-en">System Status: Nominal</span><span class="lang-zh">系统状态：正常</span>
+                <span class="lang-en">Engineering Postgraduate</span><span class="lang-zh">工程硕士在读</span>
                 <span class="hidden md:inline opacity-30">//</span>
-                <span class="hidden md:inline">Loc: 33.8688° S, 151.2093° E</span>
+                <span class="hidden md:inline">Sydney, Australia</span>
             </div>
 
             <h1 class="text-hero text-5xl md:text-7xl mb-12">
-                <span class="lang-en">Engineering Precision.<br><span style="color: var(--label)">Visual Mastery.</span></span>
-                <span class="lang-zh">工程的精度。<br><span style="color: var(--label)">视觉的造诣。</span></span>
+                <span class="lang-en">Engineering Practice.<br><span style="color: var(--label)">Visual Exploration.</span></span>
+                <span class="lang-zh">工程实践。<br><span style="color: var(--label)">视觉探索。</span></span>
             </h1>
             <p class="text-xl md:text-2xl max-w-2xl leading-relaxed font-medium" style="color: var(--text-sub)">
-                <span class="lang-en">Incoming USYD Master's Student. Specialist in 7-DOF Dynamics and Visual Storytelling.</span>
-                <span class="lang-zh">即将入读悉尼大学。专注于七自由度动力学仿真、控制算法及视觉叙事。</span>
+                <span class="lang-en">Master of Engineering student at the University of Sydney, specialising in Computational Engineering. Project experience in SolidWorks modeling and mechanical simulation.</span>
+                <span class="lang-zh">悉尼大学工程硕士在读，专业方向为 Computational Engineering。具有 SolidWorks 建模、机构运动分析及机械仿真项目经验。</span>
             </p>
         </section>
 
-        <section id="about" class="py-24 border-t border-current border-opacity-10 grid md:grid-cols-3 gap-12 reveal">
-            <div class="section-label"><span class="lang-en">/ 01. Profile Summary</span><span class="lang-zh">/ 01. 个人概述</span></div>
+        <section id="about" class="py-20 border-t border-current border-opacity-10 grid md:grid-cols-3 gap-10 reveal">
+            <h2 class="section-label"><span class="lang-en">/ 01. Background</span><span class="lang-zh">/ 01. 个人背景</span></h2>
             <div class="md:col-span-2 space-y-8">
-                <p class="text-2xl md:text-3xl font-semibold leading-snug">
-                    <span class="lang-en">Incoming Master’s student at <strong class="text-current">The University of Sydney</strong>, I explore the silent logic behind complex systems.</span>
-                    <span class="lang-zh">作为即将进入<strong class="text-current">悉尼大学</strong>攻读硕士的学生，我致力于通过数学模型探索复杂系统中的内在秩序。</span>
+                <p class="text-xl md:text-2xl font-semibold leading-relaxed">
+                    <span class="lang-en">My engineering background combines mechanical modeling, motion studies and simulation, with internship experience in product modeling, test-data organization and R&amp;D support.</span>
+                    <span class="lang-zh">我的工程经历涵盖机械建模、机构运动分析及仿真，实习中参与过产品建模、测试数据整理与研发支持。</span>
                 </p>
-                <div class="py-4 font-mono text-xl text-blue-500 opacity-80">
-                    $$\min J = \int_{0}^{\infty} [q z_c^2(t) + r u^2(t)] dt$$
+                <div class="grid sm:grid-cols-2 gap-5">
+                    <div class="apple-glass rounded-3xl p-6">
+                        <p class="project-meta mb-3"><span class="lang-en">Aug 2026 – Present</span><span class="lang-zh">2026.08 – 至今</span></p>
+                        <h3 class="text-xl font-bold mb-3"><span class="lang-en">The University of Sydney</span><span class="lang-zh">悉尼大学</span></h3>
+                        <p class="font-semibold">Master of Engineering</p>
+                        <p class="mt-2" style="color: var(--text-sub)">Computational Engineering</p>
+                        <p class="project-meta mt-4"><span class="lang-en">Expected completion: Jan 2028</span><span class="lang-zh">预计 2028.01 完成</span></p>
+                    </div>
+                    <div class="apple-glass rounded-3xl p-6">
+                        <p class="project-meta mb-3"><span class="lang-en">Sep 2021 – Jun 2025</span><span class="lang-zh">2021.09 – 2025.06</span></p>
+                        <h3 class="text-xl font-bold mb-3"><span class="lang-en">Southwest Jiaotong University</span><span class="lang-zh">西南交通大学</span></h3>
+                        <p class="font-semibold"><span class="lang-en">Bachelor of Engineering</span><span class="lang-zh">工学学士</span></p>
+                        <p class="mt-2" style="color: var(--text-sub)"><span class="lang-en">Transportation Equipment and Control Engineering</span><span class="lang-zh">交通设备与控制工程</span></p>
+                        <p class="project-meta mt-4"><span class="lang-en">Average: 83.84/100</span><span class="lang-zh">平均分：83.84/100</span></p>
+                    </div>
                 </div>
-                <div class="space-y-6 text-lg leading-relaxed font-medium" style="color: var(--text-sub)">
-                    <p>
-                        <span class="lang-en">I specialize in re-engineering physical laws into robust algorithms via <span class="text-current border-b border-current/30">MATLAB/Simulink</span>. Beyond logic, I am a <strong style="color: var(--text-main)">500px contracted photographer</strong>, using the lens to find structural harmony in the ephemeral.</span>
-                        <span class="lang-zh">我擅长利用 <span class="text-current border-b border-current/30">MATLAB/Simulink</span> 与 <span class="text-current border-b border-current/30">ADAMS</span> 将物理定律转化为稳健的算法。在严谨的逻辑之外，我也以 <strong style="color: var(--text-main)">500px 签约摄影师</strong> 的视角观察世界，捕捉光影流转中的结构和谐。</span>
-                    </p>
+                <div>
+                    <h3 class="text-lg font-bold mb-3"><span class="lang-en">Tools &amp; Languages</span><span class="lang-zh">工具与语言</span></h3>
+                    <div><span class="tool-chip">SolidWorks / Motion</span><span class="tool-chip">MATLAB / Simulink</span><span class="tool-chip">CarSim</span><span class="tool-chip">ADAMS</span><span class="tool-chip">Excel</span><span class="tool-chip">Photoshop</span></div>
+                    <p class="mt-2 leading-relaxed" style="color: var(--text-sub)"><span class="lang-en">Project experience in SolidWorks parts, assemblies and Motion studies; project use of MATLAB/Simulink, CarSim and ADAMS. Mandarin (native), English (CET-4).</span><span class="lang-zh">SolidWorks 零件、装配及 Motion 运动分析项目实践；MATLAB/Simulink、CarSim、ADAMS 项目使用经验。中文（母语），英语（CET-4）。</span></p>
+                </div>
+                <div class="pt-4">
+                    <h3 class="text-lg font-bold mb-5"><span class="lang-en">Internship Experience</span><span class="lang-zh">实习经历</span></h3>
+                    <div class="space-y-5 leading-relaxed" style="color: var(--text-sub)">
+                        <div><p class="project-meta"><span class="lang-en">Jul – Aug 2023 · Research Assistant Intern</span><span class="lang-zh">2023.07 – 2023.08 · 研究助理实习生</span></p><p class="font-semibold mt-1"><span class="lang-en">Wuhu Ruiji Intelligent Manufacturing Co., Ltd.</span><span class="lang-zh">芜湖瑞集智能制造有限公司</span></p><p class="mt-2"><span class="lang-en">Assisted with competitor research, product-test data and reports; supported component drafting and suspension torsion-bar design discussions.</span><span class="lang-zh">协助竞品调研、产品测试数据整理与报告编制，参与部件图纸绘制及悬挂扭杆改进讨论。</span></p></div>
+                        <div><p class="project-meta"><span class="lang-en">Jul – Aug 2022 · Product R&amp;D Intern</span><span class="lang-zh">2022.07 – 2022.08 · 产品研发实习生</span></p><p class="font-semibold mt-1"><span class="lang-en">Sichuan Yu Suan Ni Technology Co., Ltd.</span><span class="lang-zh">四川玉狻猊科技有限公司</span></p><p class="mt-2"><span class="lang-en">Used SolidWorks for component modeling and revisions from 2D drawings and existing CAD files; prepared Photoshop textures for presentation.</span><span class="lang-zh">依据二维图纸与已有 CAD 文件，使用 SolidWorks 进行部件建模和修改，并使用 Photoshop 制作展示贴图。</span></p></div>
+                    </div>
+                </div>
+                <p class="leading-relaxed" style="color: var(--text-sub)"><span class="lang-en">Outside engineering, I explore natural landscapes, urban photography and AI-assisted visual creation.</span><span class="lang-zh">工程之外，我也记录自然与城市光影，并进行 AI 辅助视觉创作。</span></p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="Resume_CN.pdf" download class="apple-glass rounded-full px-5 py-3 font-semibold"><span class="lang-en">Chinese Resume ↓</span><span class="lang-zh">下载中文简历 ↓</span></a>
+                    <a href="Resume_EN.pdf" download class="apple-glass rounded-full px-5 py-3 font-semibold"><span class="lang-en">English Resume ↓</span><span class="lang-zh">下载英文简历 ↓</span></a>
                 </div>
             </div>
         </section>
 
-        <section id="engineering" class="py-24 border-t border-current border-opacity-10">
-            <div class="mb-20 reveal">
-                <div class="section-label mb-4"><span class="lang-en">/ 02. Engineering Works</span><span class="lang-zh">/ 02. 工程项目</span></div>
+        <section id="engineering" class="py-20 border-t border-current border-opacity-10">
+            <div class="mb-10 reveal">
+                <h2 class="section-label mb-4"><span class="lang-en">/ 02. Engineering Projects</span><span class="lang-zh">/ 02. 工程项目</span></h2>
+                <p style="color: var(--text-sub)"><span class="lang-en">Selected academic projects in mechanical design, dynamics and control.</span><span class="lang-zh">机械设计、动力学与控制方向的本科项目实践。</span></p>
             </div>
-            <div class="grid md:grid-cols-2 gap-10">
-                <div class="apple-glass rounded-[2.5rem] p-10 group reveal js-tilt" data-tilt>
-                    <h3 class="text-2xl font-bold mb-8 tracking-tight"><span class="lang-en">7-DOF Suspension</span><span class="lang-zh">七自由度悬架仿真</span></h3>
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <img src="images/c35139d040d8c48c577d37ccaff4fabe.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
-                        <img src="images/08458e2f4ddfef8fe46de75e12093f77.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+            <div class="grid md:grid-cols-2 gap-6">
+                <article class="apple-glass rounded-[2rem] p-6 sm:p-8 reveal">
+                    <p class="project-meta mb-3"><span class="lang-en">Dec 2024 – May 2025 · Bachelor’s thesis</span><span class="lang-zh">2024.12 – 2025.05 · 本科毕业设计</span></p>
+                    <h3 class="text-2xl font-bold mb-5 tracking-tight"><span class="lang-en">Semi-Active Suspension Control</span><span class="lang-zh">汽车半主动悬架控制方法研究</span></h3>
+                    <div class="grid grid-cols-2 gap-3 mb-5">
+                        <img src="images/c35139d040d8c48c577d37ccaff4fabe.png" alt="Suspension simulation model from the undergraduate thesis / 毕业设计悬架仿真模型" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
+                        <img src="images/08458e2f4ddfef8fe46de75e12093f77.png" alt="Suspension simulation output / 悬架仿真输出" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
                     </div>
-                    <p class="text-xl font-bold mb-2"><span class="lang-en">58.7% RMS Reduction</span><span class="lang-zh">58.7% 加速度降幅</span></p>
-                    <p class="text-base leading-relaxed font-medium" style="color: var(--text-sub)">
-                        <span class="lang-en">Optimization of semi-active suspension via GA-PID control.</span>
-                        <span class="lang-zh">通过遗传算法优化的 PID 策略，大幅提升车辆行驶平顺性。</span>
-                    </p>
-                </div>
-                <div class="apple-glass rounded-[2.5rem] p-10 group reveal js-tilt" data-tilt>
-                    <h3 class="text-2xl font-bold mb-8 tracking-tight"><span class="lang-en">Mechanism Design</span><span class="lang-zh">机械结构设计</span></h3>
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <img src="images/cb7791086333d4d69f2aff3d8a59ee66.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
-                        <img src="images/73e17f49ad824ee0d5a4c1752d363e1b.png" class="aspect-[4/3] object-contain bg-black/20 rounded-3xl p-2 border border-white/5 grayscale group-hover:grayscale-0 transition-all">
+                    <p class="font-semibold mb-4">MATLAB/Simulink · CarSim</p>
+                    <ul class="project-points lang-en"><li>Developed quarter-car and half-car suspension models and configured a full-vehicle co-simulation interface.</li><li>Compared passive suspension, PID, Skyhook, fuzzy PID and GA-tuned PID using acceleration RMS and related metrics.</li></ul>
+                    <ul class="project-points lang-zh"><li>建立四分之一车与半车悬架模型，配置 CarSim–Simulink 整车联合仿真接口。</li><li>比较被动悬架、PID、Skyhook、模糊 PID 与遗传算法调参 PID，整理加速度 RMS 等评价指标。</li></ul>
+                </article>
+                <article class="apple-glass rounded-[2rem] p-6 sm:p-8 reveal">
+                    <p class="project-meta mb-3"><span class="lang-en">Sep 2023 – Sep 2024 · Course project</span><span class="lang-zh">2023.09 – 2024.09 · 机械课程设计</span></p>
+                    <h3 class="text-2xl font-bold mb-5 tracking-tight"><span class="lang-en">Steel Plate Turning Mechanism</span><span class="lang-zh">钢板翻转机构综合设计</span></h3>
+                    <div class="grid grid-cols-2 gap-3 mb-5">
+                        <img src="images/cb7791086333d4d69f2aff3d8a59ee66.png" alt="SolidWorks mechanism design / SolidWorks 机构设计" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
+                        <img src="images/73e17f49ad824ee0d5a4c1752d363e1b.png" alt="Mechanical design project output / 机械课程设计输出" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-contain bg-black/20 rounded-2xl p-2 border border-white/5">
                     </div>
-                    <p class="text-xl font-bold mb-2"><span class="lang-en">774 Component Assembly</span><span class="lang-zh">774 个精密零件装配</span></p>
-                    <p class="text-base leading-relaxed font-medium" style="color: var(--text-sub)">
-                        <span class="lang-en">Full SolidWorks assembly and FEA stress analysis verification.</span>
-                        <span class="lang-zh">基于 SolidWorks 的全比例装配及有限元应力动态验证。</span>
-                    </p>
-                </div>
+                    <p class="font-semibold mb-4">SolidWorks · Motion</p>
+                    <ul class="project-points lang-en"><li>Compared four mechanism concepts and modeled a dual-arm crank-rocker assembly and its components.</li><li>Analyzed displacement, velocity, acceleration and drive torque; documented motion-study outputs.</li><li>Performed preliminary motor and transmission sizing, mobility analysis and strength calculations.</li></ul>
+                    <ul class="project-points lang-zh"><li>比较四种机构方案，围绕双臂曲柄摇杆机构开展零件与装配建模。</li><li>分析位移、速度、加速度及驱动力矩，整理运动仿真曲线与设计说明。</li><li>开展电机与传动参数选型、自由度分析及初步强度计算。</li></ul>
+                </article>
+                <article class="apple-glass rounded-[2rem] p-6 sm:p-8 md:col-span-2 reveal">
+                    <p class="project-meta mb-3"><span class="lang-en">Apr 2023 – May 2024 · SRTP · Project lead</span><span class="lang-zh">2023.04 – 2024.05 · 大学生科研训练项目（SRTP）· 项目负责人</span></p>
+                    <h3 class="text-2xl font-bold mb-5 tracking-tight"><span class="lang-en">Pantograph Guide-Plate Profile Design &amp; Optimization</span><span class="lang-zh">受电弓线导板渐开曲面结构设计及优化</span></h3>
+                    <p class="font-semibold mb-4">MATLAB · ADAMS · <span class="lang-en">Constrained optimization</span><span class="lang-zh">约束优化</span></p>
+                    <ul class="project-points lang-en"><li>Coordinated tasks and documentation; contributed to MATLAB geometry and force analysis with ADAMS motion comparisons.</li><li>Contributed to constrained profile optimization using a genetic algorithm; examined initial-point and spring-stiffness effects.</li></ul>
+                    <ul class="project-points lang-zh"><li>协调项目分工与资料整理，参与 MATLAB 几何及受力分析，并与 ADAMS 运动仿真结果对照。</li><li>参与线导板轮廓的约束优化与遗传算法求解，比较初始点、弹簧刚度对轮廓的影响。</li></ul>
+                </article>
             </div>
         </section>
 
-        <section id="visual" class="py-24 border-t border-current border-opacity-10">
-            <div class="mb-20 reveal">
+        <section id="visual" class="py-20 border-t border-current border-opacity-10">
+            <div class="mb-10 reveal">
                 <div class="section-label mb-6"><span class="lang-en">/ 03. Visual Arts</span><span class="lang-zh">/ 03. 视觉艺术</span></div>
                 <h2 class="text-4xl font-bold tracking-tight"><span class="lang-en">Nature & Urban</span><span class="lang-zh">自然与城市</span></h2>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-32 reveal">
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/mountain.jpg" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-[1.5s]"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/moon.png" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/night.jpg" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/c73c93200937771ab11bd38626287762.jpg" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/city-night-2.jpg" class="absolute inset-0 w-full h-full object-cover"></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/0778d39c7f0697d71ed01503a4294365.jpg" class="absolute inset-0 w-full h-full object-cover"></div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-16 reveal">
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/mountain.jpg" alt="Mountain landscape / 山地风景" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-all duration-[1.5s]"></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/moon.png" alt="Moon photography / 月亮摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/night.jpg" alt="Night photography / 夜景摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/c73c93200937771ab11bd38626287762.jpg" alt="Landscape and city photography / 风景与城市摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/city-night-2.jpg" alt="City at night / 城市夜景" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] js-tilt shadow-xl" data-tilt><img src="images/0778d39c7f0697d71ed01503a4294365.jpg" alt="Urban photography / 城市摄影" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"></div>
             </div>
             <div class="mb-12 reveal">
-                <h2 class="text-4xl font-bold tracking-tight mb-4"><span class="lang-en">Neural Synthesis</span><span class="lang-zh">神经合成艺术</span></h2>
-                <p class="text-lg opacity-50 font-light"><span class="lang-en">AI-assisted visual experimentation.</span><span class="lang-zh">基于 AI 辅助的视觉探索。</span></p>
+                <h2 class="text-4xl font-bold tracking-tight mb-4"><span class="lang-en">AI-Assisted Visual Experiments</span><span class="lang-zh">AI 辅助视觉创作</span></h2>
+                <p class="text-lg font-medium"><span class="lang-en">AI-assisted visual experimentation.</span><span class="lang-zh">基于 AI 辅助的视觉探索。</span></p>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 gap-5 reveal">
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/Gemini_Generated_Image_j28htxj28htxj28h.png" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">Neural</span></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/2B50F1EEC591BCEDFFB5F82ED69F59B3.png" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">Neural</span></div>
-                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/470FBA9EFE7E01EB96F8DFB719C62BEA.png" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-8 left-8 px-5 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">Neural</span></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/Gemini_Generated_Image_j28htxj28htxj28h.png" alt="AI-assisted visual experiment, first work / AI 辅助视觉创作一" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-4 left-4 px-4 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">AI</span></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/2B50F1EEC591BCEDFFB5F82ED69F59B3.png" alt="AI-assisted visual experiment, second work / AI 辅助视觉创作二" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-4 left-4 px-4 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">AI</span></div>
+                <div class="aspect-square relative group overflow-hidden rounded-[2.5rem] shadow-xl"><img src="images/470FBA9EFE7E01EB96F8DFB719C62BEA.png" alt="AI-assisted visual experiment, third work / AI 辅助视觉创作三" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover"><span class="absolute top-4 left-4 px-4 py-1.5 bg-white text-black text-[11px] font-black rounded-full uppercase">AI</span></div>
             </div>
         </section>
 
-        <section id="contact" class="pt-48 pb-20 border-t border-current border-opacity-10 reveal">
-            <h2 class="text-6xl md:text-9xl font-bold tracking-tighter mb-20"><span class="lang-en">Let's talk.</span><span class="lang-zh">期待与您对话。</span></h2>
-            <div class="grid md:grid-cols-2 gap-16 text-2xl font-semibold">
+        <section id="contact" class="pt-20 pb-20 border-t border-current border-opacity-10 reveal">
+            <h2 class="text-4xl md:text-7xl font-bold tracking-tighter mb-20"><span class="lang-en">Let's talk.</span><span class="lang-zh">期待与您对话。</span></h2>
+            <div class="grid md:grid-cols-2 gap-10 text-xl font-semibold">
                 <div class="space-y-6">
                     <p class="section-label"><span class="lang-en">Connect</span><span class="lang-zh">联系方式</span></p>
                     <a href="mailto:2746783219@qq.com" class="block hover:underline underline-offset-[12px] decoration-2">2746783219@qq.com</a>
-                    <a href="https://www.linkedin.com/in/qi-wang-a344a43b4" target="_blank" class="block opacity-80 hover:opacity-100 transition-opacity">LinkedIn</a>
+                    <a href="https://www.linkedin.com/in/qi-wang-a344a43b4" target="_blank" rel="noopener noreferrer" class="block opacity-80 hover:opacity-100 transition-opacity">LinkedIn</a>
                 </div>
                 <div class="space-y-6">
                     <p class="section-label"><span class="lang-en">Location</span><span class="lang-zh">所在地</span></p>
-                    <p><span class="lang-en">Sydney, NSW // Australia</span><span class="lang-zh">澳大利亚 // 悉尼</span></p>
-                    <p class="opacity-80">+86 139 5530 0913</p>
+                    <p><span class="lang-en">Sydney, NSW, Australia</span><span class="lang-zh">澳大利亚 · 悉尼</span></p>
+                    <a href="tel:+61432703190" class="block hover:underline"><span class="lang-en">Australia:</span><span class="lang-zh">澳洲：</span> +61 432 703 190</a>
+                    <a href="tel:+8613955300913" class="block hover:underline"><span class="lang-en">China:</span><span class="lang-zh">国内：</span> +86 139 5530 0913</a>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="py-12 border-t border-current border-opacity-5 text-center text-[11px] font-bold opacity-30 uppercase tracking-[0.5em]">
+    <footer class="py-12 border-t border-current border-opacity-5 text-center text-[11px] font-bold uppercase tracking-[0.15em]">
         &copy; 2026 QI WANG // DESIGNED IN SYDNEY.
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>
         function toggleTheme() {
-            const body = document.body;
-            const currentTheme = body.getAttribute('data-theme');
-            body.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+            const next = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            document.body.dataset.theme = next;
+            document.getElementById('theme-btn').setAttribute('aria-label', next === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
         }
 
         function toggleLang() {
-            const body = document.body;
-            const current = body.getAttribute('data-lang');
-            const newLang = current === 'en' ? 'zh' : 'en';
-            body.setAttribute('data-lang', newLang);
-            document.getElementById('resume-btn').href = newLang === 'zh' ? "Resume_CN.pdf" : "Resume_EN.pdf";
+            const next = document.body.dataset.lang === 'en' ? 'zh' : 'en';
+            document.body.dataset.lang = next;
+            document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
+            document.getElementById('resume-btn').href = next === 'zh' ? 'Resume_CN.pdf' : 'Resume_EN.pdf';
+            document.getElementById('language-btn').setAttribute('aria-label', next === 'zh' ? 'Switch to English' : '切换到中文');
         }
 
-        VanillaTilt.init(document.querySelectorAll(".js-tilt"), { max: 4, speed: 1000, glare: true, "max-glare": 0.1 });
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        if (window.VanillaTilt && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            VanillaTilt.init(document.querySelectorAll('.js-tilt'), { max: 4, speed: 1000, glare: true, 'max-glare': 0.1 });
+        }
     </script>
 </body>
 </html>
