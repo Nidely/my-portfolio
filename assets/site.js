@@ -98,7 +98,22 @@
         touchStart = null;
     }, { passive: true });
     stage.addEventListener('touchcancel', () => { touchStart = null; }, { passive: true });
-    window.addEventListener('portfolio:preferences', () => { if (lightbox.open) showImage(currentIndex); });
+    const main = document.querySelector('main');
+    let previousLanguage = root.dataset.lang;
+    let previousTheme = root.dataset.theme;
+    let preferenceAnimation = null;
+    window.addEventListener('portfolio:preferences', () => {
+        if (lightbox.open) showImage(currentIndex);
+        const changed = previousLanguage !== root.dataset.lang || previousTheme !== root.dataset.theme;
+        previousLanguage = root.dataset.lang;
+        previousTheme = root.dataset.theme;
+        if (!changed || reducedMotion.matches || !main?.animate) return;
+        preferenceAnimation?.cancel();
+        preferenceAnimation = main.animate([
+            { opacity: .7, transform: 'translateY(5px)' },
+            { opacity: 1, transform: 'translateY(0)' }
+        ], { duration: 280, easing: 'cubic-bezier(.22,1,.36,1)' });
+    });
 
     const header = document.querySelector('.site-header');
     const progress = document.getElementById('scroll-progress');
@@ -116,15 +131,33 @@
     updateScroll();
 
     const revealItems = [...document.querySelectorAll('.reveal')];
-    if ('IntersectionObserver' in window && !reducedMotion.matches) {
+    if ('IntersectionObserver' in window) {
         const revealObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); }
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+                else {
+                    const bounds = entry.boundingClientRect;
+                    // Re-arm only outside the viewport; scrolling must never hide readable content.
+                    if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) entry.target.classList.remove('visible');
+                }
             });
-        }, { threshold: .04, rootMargin: '0px 0px 50px 0px' });
-        revealItems.forEach(item => { item.classList.add('pending'); revealObserver.observe(item); });
+        }, { threshold: 0, rootMargin: '0px 0px 40px 0px' });
+        function syncRevealMotion() {
+            revealObserver.disconnect();
+            revealItems.forEach(item => {
+                item.classList.add('pending');
+                if (reducedMotion.matches) item.classList.add('visible');
+                else {
+                    const bounds = item.getBoundingClientRect();
+                    if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) item.classList.remove('visible');
+                    revealObserver.observe(item);
+                }
+            });
+        }
+        syncRevealMotion();
         reducedMotion.addEventListener('change', event => {
-            if (event.matches) { revealObserver.disconnect(); revealItems.forEach(item => item.classList.add('visible')); }
+            if (event.matches) preferenceAnimation?.cancel();
+            syncRevealMotion();
         });
     }
     if ('IntersectionObserver' in window) {
