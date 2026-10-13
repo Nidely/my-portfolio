@@ -15,3 +15,18 @@ dialog{color:var(--text);border:1px solid var(--line);background:var(--solid);bo
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}.js-enabled .reveal.pending{opacity:1;transform:none}.glass-card:hover,.pill-link:hover,.hero-feature:hover,.image-link:hover img,button:active,.pill-link:active,.resume-button:active{transform:none}.lightbox-nav:active{transform:translateY(-50%)}}
 section[id]{scroll-margin-top:0}
 @media print{.site-header,.hero-feature,.page-backdrop,.ambient-orb,.hero-actions,.footer-settings,.image-expand,dialog{display:none!important}.container{padding:0;max-width:none}.hero{padding:20px 0;display:block}.section{padding:25px 0;break-inside:avoid}body{background:white;color:black}.glass-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}.js-enabled .reveal.pending{opacity:1;transform:none}}
+
+/* Postcard gallery */
+.postcard-series{scroll-margin-top:0}
+.postcard-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:28px 22px;align-items:start}
+.postcard-grid figure{grid-column:span 2;min-width:0}
+.postcard-grid figure:nth-child(4){grid-column:2/span 2}
+.postcard-grid figure:nth-child(5){grid-column:4/span 2}
+.postcard-grid .image-link{aspect-ratio:2/3;border-radius:15px;background:#f7f3ea;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .45s,box-shadow .35s}
+.postcard-grid img{object-fit:contain;transform:none!important}
+.postcard-grid figcaption{font-size:12px;line-height:1.7;color:var(--sub);margin-top:11px;padding:0 2px}
+@media(hover:hover) and (pointer:fine){.postcard-grid .image-link:hover{transform:translateY(-4px);box-shadow:0 18px 42px rgba(0,0,0,.13)}}
+@media(max-width:700px){.postcard-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 16px}.postcard-grid figure,.postcard-grid figure:nth-child(4){grid-column:auto}.postcard-grid figure:nth-child(5){grid-column:1/-1;width:calc((100% - 16px)/2);justify-self:center}}
+@media(max-width:480px){.postcard-grid{grid-template-columns:1fr;gap:28px;max-width:350px;margin-inline:auto}.postcard-grid figure,.postcard-grid figure:nth-child(4),.postcard-grid figure:nth-child(5){grid-column:auto;width:100%}.postcard-grid .image-link{border-radius:14px}}
+@media(prefers-reduced-motion:reduce){.postcard-grid .image-link:hover{transform:none}}
+/* End postcard gallery */
