@@ -3,6 +3,11 @@
     const root = document.documentElement;
     const preferences = window.portfolioPreferences;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const compactMotion = window.matchMedia('(max-width: 850px), (pointer: coarse)');
+    function listenMedia(media, listener) {
+        if (media.addEventListener) media.addEventListener('change', listener);
+        else if (media.addListener) media.addListener(listener);
+    }
     root.classList.add('js-enabled');
     preferences.start();
     const isChinese = () => root.dataset.lang === 'zh';
@@ -14,10 +19,26 @@
 
     function openDialog(dialog, trigger) {
         lastTrigger = trigger;
-        dialog.showModal();
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else {
+            dialog.classList.add('dialog-fallback');
+            dialog.setAttribute('role', 'dialog');
+            dialog.setAttribute('aria-modal', 'true');
+            dialog.setAttribute('open', '');
+            dialog.open = true;
+            document.body.classList.add('fallback-modal-open');
+            dialog.querySelector('[data-close]').focus({ preventScroll: true });
+        }
         document.body.classList.add('modal-open');
     }
-    function closeDialog(dialog) { dialog.close(); }
+    function closeDialog(dialog) {
+        if (!dialog.classList.contains('dialog-fallback')) dialog.close();
+        else {
+            dialog.removeAttribute('open');
+            dialog.open = false;
+            dialog.dispatchEvent(new Event('close'));
+        }
+    }
     dialogs.forEach(dialog => {
         dialog.querySelector('[data-close]').addEventListener('click', () => closeDialog(dialog));
         dialog.addEventListener('click', event => {
@@ -26,9 +47,22 @@
             if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeDialog(dialog);
         });
         dialog.addEventListener('close', () => {
-            if (!dialogs.some(item => item.open)) document.body.classList.remove('modal-open');
+            if (!dialogs.some(item => item.open)) document.body.classList.remove('modal-open', 'fallback-modal-open');
             lastTrigger?.focus({ preventScroll: true });
         });
+        dialog.addEventListener('keydown', event => {
+            if (!dialog.classList.contains('dialog-fallback')) return;
+            if (event.key === 'Escape') { event.preventDefault(); closeDialog(dialog); }
+            if (event.key !== 'Tab') return;
+            const focusable = [...dialog.querySelectorAll('button:not([disabled]),a[href],select,[tabindex="0"]')].filter(item => item.getClientRects().length);
+            const first = focusable[0], last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+        });
+    });
+    document.addEventListener('click', event => {
+        if (!document.body.classList.contains('fallback-modal-open') || event.target.closest('dialog,[data-gallery],[data-open-settings]')) return;
+        dialogs.filter(dialog => dialog.open && dialog.classList.contains('dialog-fallback')).forEach(closeDialog);
     });
     document.querySelectorAll('[data-open-settings]').forEach(button => button.addEventListener('click', () => openDialog(settings, button)));
     document.getElementById('language-btn').addEventListener('click', () => preferences.setLanguage(isChinese() ? 'en' : 'zh'));
@@ -63,7 +97,8 @@
         currentIndex = Math.max(0, Math.min(index, currentGroup.length - 1));
         const link = currentGroup[currentIndex];
         const caption = link.dataset[isChinese() ? 'captionZh' : 'captionEn'];
-        if (viewerImage.src !== link.href) viewerImage.src = link.href;
+        const displaySource = link.dataset.viewerSrc || link.href;
+        if (viewerImage.getAttribute('src') !== displaySource) viewerImage.src = displaySource;
         viewerImage.alt = caption;
         viewerTitle.textContent = caption;
         counter.textContent = `${currentIndex + 1} / ${currentGroup.length}`;
@@ -107,7 +142,8 @@
         const changed = previousLanguage !== root.dataset.lang || previousTheme !== root.dataset.theme;
         previousLanguage = root.dataset.lang;
         previousTheme = root.dataset.theme;
-        if (!changed || reducedMotion.matches || !main?.animate) return;
+        if (changed) refreshScrollMetrics();
+        if (!changed || compactMotion.matches || reducedMotion.matches || !main?.animate) return;
         preferenceAnimation?.cancel();
         preferenceAnimation = main.animate([
             { opacity: .7, transform: 'translateY(5px)' },
@@ -118,24 +154,46 @@
     const header = document.querySelector('.site-header');
     const progress = document.getElementById('scroll-progress');
     let scrollPending = false;
+    let scrollRange = 0;
+    let headerScrolled = null;
     function updateScroll() {
-        header.classList.toggle('is-scrolled', window.scrollY > 12);
-        const available = document.documentElement.scrollHeight - window.innerHeight;
-        progress.style.transform = `scaleX(${available > 0 ? Math.min(1, Math.max(0, window.scrollY / available)) : 0})`;
+        const scrolled = window.scrollY > 12;
+        if (scrolled !== headerScrolled) {
+            header.classList.toggle('is-scrolled', scrolled);
+            headerScrolled = scrolled;
+        }
+        if (!compactMotion.matches) progress.style.transform = `scaleX(${scrollRange > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollRange)) : 0})`;
         scrollPending = false;
     }
+    function refreshScrollMetrics() {
+        // Read layout on size/content changes, rather than on every scroll frame.
+        scrollRange = compactMotion.matches ? 0 : Math.max(0, root.scrollHeight - window.innerHeight);
+        updateScroll();
+    }
     window.addEventListener('scroll', () => {
+        if (compactMotion.matches) {
+            if ((window.scrollY > 12) !== headerScrolled) updateScroll();
+            return;
+        }
         if (!scrollPending) { scrollPending = true; window.requestAnimationFrame(updateScroll); }
     }, { passive: true });
-    window.addEventListener('resize', () => { if (window.innerWidth > 850) setMenu(false); updateScroll(); });
-    updateScroll();
+    window.addEventListener('resize', () => { if (window.innerWidth > 850) setMenu(false); refreshScrollMetrics(); });
+    window.addEventListener('load', refreshScrollMetrics);
+    document.querySelectorAll('.case-details').forEach(details => details.addEventListener('toggle', refreshScrollMetrics));
+    if ('ResizeObserver' in window) new ResizeObserver(refreshScrollMetrics).observe(document.body);
+    refreshScrollMetrics();
 
     const revealItems = [...document.querySelectorAll('.reveal')];
     if ('IntersectionObserver' in window) {
+        const revealedOnce = new WeakSet();
         const revealObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-                else {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealedOnce.add(entry.target);
+                    if (compactMotion.matches) revealObserver.unobserve(entry.target);
+                }
+                else if (!compactMotion.matches) {
                     const bounds = entry.boundingClientRect;
                     // Re-arm only outside the viewport; scrolling must never hide readable content.
                     if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) entry.target.classList.remove('visible');
@@ -146,7 +204,7 @@
             revealObserver.disconnect();
             revealItems.forEach(item => {
                 item.classList.add('pending');
-                if (reducedMotion.matches) item.classList.add('visible');
+                if (reducedMotion.matches || (compactMotion.matches && revealedOnce.has(item))) item.classList.add('visible');
                 else {
                     const bounds = item.getBoundingClientRect();
                     if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) item.classList.remove('visible');
@@ -155,10 +213,11 @@
             });
         }
         syncRevealMotion();
-        reducedMotion.addEventListener('change', event => {
+        listenMedia(reducedMotion, event => {
             if (event.matches) preferenceAnimation?.cancel();
             syncRevealMotion();
         });
+        listenMedia(compactMotion, () => { refreshScrollMetrics(); syncRevealMotion(); });
     }
     if ('IntersectionObserver' in window) {
         const links = [...menu.querySelectorAll('a')];
